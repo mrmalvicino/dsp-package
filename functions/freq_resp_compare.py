@@ -4,13 +4,13 @@ import os
 import sys
 
 root_dir = os.path.dirname(__file__)
-python_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'python-functions',))
+python_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'python-functions'))
 sys.path.insert(0, python_functions_path)
-matplotlib_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'matplotlib-functions',))
+matplotlib_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'matplotlib-functions'))
 sys.path.insert(0, matplotlib_functions_path)
 
 import python_functions as py_fx
-import matplotlib_functions_path as plt_fx
+import matplotlib_functions as plt_fx
 
 
 def freq_resp_comp(*files, **kwargs):

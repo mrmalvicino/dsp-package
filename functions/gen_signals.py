@@ -4,13 +4,13 @@ import os
 import sys
 
 root_dir = os.path.dirname(__file__)
-python_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'python-functions',))
+python_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'python-functions'))
 sys.path.insert(0, python_functions_path)
-matplotlib_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'matplotlib-functions',))
+matplotlib_functions_path = os.path.realpath(os.path.join(root_dir, '..', '..', 'matplotlib-functions'))
 sys.path.insert(0, matplotlib_functions_path)
 
-import python_functions as py_fx
-import matplotlib_functions_path as plt_fx
+import python_functions as pyfun
+import matplotlib_functions as matplt
 
 
 def gen_discrete_signals(signal_name, n_start=-10, n_end=10, n_0=10, on=5, off=15, m=5, mu=0, sigma=1, isClosedInterval = True, **kwargs):
@@ -150,7 +150,7 @@ def gen_discrete_signals(signal_name, n_start=-10, n_end=10, n_0=10, on=5, off=1
     if len(n) < 21:
         plt.xticks(n)
     else:
-        plt.xticks(plt_fx.gen_ticks(n, N=21))
+        plt.xticks(matplt.gen_ticks(n, N=21))
     
     graph = plt.gcf()
     
@@ -202,14 +202,14 @@ def gen_sin_list(*frequencies, A=1, f_s = 44100, isClosedInterval = True):
 
     """
     
-    t = np.arange(0, 1/py_fx.closest_to_average(frequencies) + int(isClosedInterval)/f_s , 1/f_s)
+    t = np.arange(0, 1/pyfun.closest_to_average(frequencies) + int(isClosedInterval)/f_s , 1/f_s)
     
     output = []
     
     for i in range(0, len(frequencies), 1):
         omega_i = 2*np.pi*frequencies[i]
         y_i = A*np.sin(omega_i*t)
-        if frequencies[i] == py_fx.closest_to_average(frequencies):
+        if frequencies[i] == pyfun.closest_to_average(frequencies):
             label = f'sin_{i+1}_freq_{frequencies[i]}Hz(ave)'
         else:
             label= f'sin_{i+1}_freq_{frequencies[i]}Hz'
@@ -260,5 +260,20 @@ def plot_sin_list(tuples_list, **plot_kwargs):
     
     plt.xticks(np.linspace(0, 1/freq_ave, 5))
     plt.legend(labels, loc="upper right")
-    
+
     return
+
+def generateTimeArray(wave_frequency, amount_of_periods = 1, sampling_rate = 44100):
+    wave_period = 1 / wave_frequency
+    interval_lenght = amount_of_periods * wave_period
+    step = 1 / sampling_rate
+    time_array = np.arange(0, interval_lenght, step)
+
+    return time_array
+
+def generateSine(time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
+    omega = 2 * np.pi * wave_frequency
+    phase_rad = phase_deg * (np.pi / 180)
+    sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
+
+    return sine_array
