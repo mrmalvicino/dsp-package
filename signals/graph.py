@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from functions import make_list
+from functions import to_list
 
 discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
@@ -16,7 +16,7 @@ class Graph:
         pass
 
 
-    def multiple_overlaids(self, x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
+    def plot_multiple_overlaids(self, x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
         """
         Generates a single graph of multiple signals one over each other.
 
@@ -28,26 +28,21 @@ class Graph:
             **kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
 
         Returns:
-            (matplotlib figure) Graph object
+            (matplotlib figure) Graph.
         """
 
         if len(y_data_list) != len(y_legends_list):
             raise ValueError('There are not as many signals as legends.')
 
-        plt.figure(figsize=(8,4))
+        plt.figure(figsize=(10,5))
         plt.grid()
 
-        if is_discrete == False:
-            plt.xlabel("Time [s]")
-            plt.xticks(x_data)
-        else:
+        if is_discrete == True:
             plt.xlabel("Samples [n]")
             kwargs = discrete_kwargs
-
-            if len(x_data) < 21:
-                plt.xticks(x_data)
-            else:
-                plt.xticks(self.generate_ticks(x_data, 21))
+            plt.xticks(self.generate_ticks(x_data, 21))
+        else:
+            plt.xlabel("Time [s]")
 
         plt.ylabel("Amplitude")
 
@@ -56,6 +51,95 @@ class Graph:
             plt.plot(x_data, y_data, **kwargs)
 
         plt.legend(y_legends_list, loc = "upper right")
+        graph = plt.gcf()
+
+        return graph
+
+
+    def plot_dual_axis(self, x, y, **kwargs):
+        """
+        Generates a plot using matplotlib.
+
+        Args:
+            x (numpy.ndarray) Data for the horizontal axis.
+            y (tuple of numpy.ndarray) Data for the vertical axes. A two dimentions tuple is expected, containing the data for the left and right vertical axes in each component respectively.
+            **kwargs (unpacked dict) Object orientated kwargs values for matplotlib.pyplot.plot() and matplotlib.pyplot.setp() methods. Bidimentional tuples are expected for the keys that involves the vertical axes. For example, the scale could be determined by defining the dictionary kwargs = {'xscale': 'linear', 'yscale': ('logit','log')} and using it into plot_dual_axis(x, y, **kwargs).
+
+        Returns:
+            (matplotlib figure) Graph.
+        """
+
+        # Store the **kwargs in a new dictionary:
+        user_inputs = kwargs
+
+        # Define possible **kwargs:
+        kwargs = {
+            'figsize': (10,5),
+            'title': 'Plot',
+            'xlabel': '',
+            'ylabel': ('',''),
+            'xscale': 'linear',
+            'yscale': ('linear','linear'),
+            'legend': ('',''),
+            'xticks': 'default',
+            'yticks': ('default','default'),
+            'xticklabels': 'default',
+            'yticklabels': ('default','default'),
+            'xlim': 'default',
+            'ylim': ('default','default'),
+            'save': False,
+            'save_folder': 'default'
+        }
+
+        # Overwrite the possible **kwargs with the actual inputs:
+        for key, value in user_inputs.items():
+            if key in kwargs:
+                kwargs[key] = value
+        
+        # Split the plt.setp kwargs into 2 dictionaries:
+        setpL = dict()
+        setpR = dict()
+
+        setpL_keys = ['yticks', 'yticklabels', 'ylim', 'xticks', 'xticklabels', 'xlim']
+        setpR_keys = ['yticks', 'yticklabels', 'ylim']
+
+        for key in setpL_keys:
+            if len(kwargs[key]) == 2:
+                if kwargs[key][0] != 'default':
+                    setpL.update({key: kwargs[key][0]})
+            else:
+                if kwargs[key] != 'default':
+                    setpL.update({key: kwargs[key]})
+
+        for key in setpR_keys:
+            if len(kwargs[key]) == 2:
+                if kwargs[key][1] != 'default':
+                    setpR.update({key: kwargs[key][1]})
+
+        # Generate plot:
+        fig, (axisL) = plt.subplots(1,1, figsize=kwargs['figsize'])
+        axisR = axisL.twinx()
+        
+        axisL.plot(x, y[0], color='blue')
+        axisR.plot(x, y[1], color='red', linestyle='--')
+        
+        axisL.set_xlabel(kwargs['xlabel'])
+        axisL.set_ylabel(kwargs['ylabel'][0])
+        axisR.set_ylabel(kwargs['ylabel'][1])
+        
+        axisL.set_xscale(kwargs['xscale'])
+        axisL.set_yscale(kwargs['yscale'][0])
+        axisR.set_yscale(kwargs['yscale'][1])
+        
+        axisL.set_title(kwargs['title'])
+        axisL.legend([kwargs['legend'][0]], loc='lower left')
+        axisR.legend([kwargs['legend'][1]], loc='lower right')
+
+        plt.setp(axisL, **setpL)
+        plt.setp(axisR, **setpR)
+        
+        axisL.grid()
+        plt.tight_layout()
         graph = plt.gcf()
 
         return graph
@@ -73,7 +157,7 @@ class Graph:
             (list) List of generated ticks.
         """
 
-        samples_array = make_list(samples_array)
+        samples_array = to_list(samples_array)
         ticks = []
 
         if samples_array != []:
@@ -92,148 +176,29 @@ class Graph:
         return ticks
 
 
-def dual_axis(x, y, **kwargs):
-    """
-    Generates a plot using matplotlib.
+    def generate_octaves(self):
+        """
+        Generates lists of ticks and tick labels that can both be used in matplotlib.pyplot.setp() method. The ticks are set to octaves, and defined according to UNE-EN 61260.
 
-    Parameters
-    ----------
+        Returns:
+        ticks_list (list)
+        tick_labels (list)
+        """
 
-    x : NUMPY ARRAY
-        Data for the horizontal axis.
-    
-    y : TUPLE OF NUMPY ARRAYS
-        Data for the vertical axes. A two dimentions tuple is expected, containing the data for the left and right vertical axes in each component respectively.
+        ticks_list = []
+        tick_labels = []
 
-    **kwargs : UNPACKED DICTIONARY
-        Object orientated kwargs values for matplotlib.pyplot.plot() and matplotlib.pyplot.setp() methods.
-        Bidimentional tuples are expected for the keys that involves the vertical axes.
-        For example, the scale could be determined by defining the dictionary kwargs = {'xscale': 'linear', 'yscale': ('logit','log')} and using it into plot_LR(x, y, **kwargs).
+        for i in range(0, 10, 1):
+                ticks_list.append(31.25 * (2 ** i))
+                if 31.25 * (2 ** i) < 1000:
+                    tick_labels.append(str(int(31.25 * (2 ** i))))
+                else:
+                    tick_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
 
-    Returns
-    -------
-
-    none
-    """
-
-    # Store the **kwargs in a new dictionary:
-    user_inputs = kwargs
-
-    # Define possible **kwargs:
-    kwargs = {
-        'figsize': (10,5),
-        'title': 'Plot',
-        'xlabel': '',
-        'ylabel': ('',''),
-        'xscale': 'linear',
-        'yscale': ('linear','linear'),
-        'legend': ('',''),
-        'xticks': 'default',
-        'yticks': ('default','default'),
-        'xticklabels': 'default',
-        'yticklabels': ('default','default'),
-        'xlim': 'default',
-        'ylim': ('default','default'),
-        'save': False,
-        'save_folder': 'default'
-    }
-
-    # Overwrite the possible **kwargs with the actual inputs:
-    for key, value in user_inputs.items():
-        if key in kwargs:
-            kwargs[key] = value
-    
-    # Split the plt.setp kwargs into 2 dictionaries:
-    setpL = dict()
-    setpR = dict()
-
-    setpL_keys = ['yticks', 'yticklabels', 'ylim', 'xticks', 'xticklabels', 'xlim']
-    setpR_keys = ['yticks', 'yticklabels', 'ylim']
-
-    for key in setpL_keys:
-        if len(kwargs[key]) == 2:
-            if kwargs[key][0] != 'default':
-                setpL.update({key: kwargs[key][0]})
-        else:
-            if kwargs[key] != 'default':
-                setpL.update({key: kwargs[key]})
-
-    for key in setpR_keys:
-        if len(kwargs[key]) == 2:
-            if kwargs[key][1] != 'default':
-                setpR.update({key: kwargs[key][1]})
-
-    # Generate plot:
-    fig, (axisL) = plt.subplots(1,1, figsize=kwargs['figsize'])
-    axisR = axisL.twinx()
-    
-    axisL.plot(x, y[0], color='blue')
-    axisR.plot(x, y[1], color='red', linestyle='--')
-    
-    axisL.set_xlabel(kwargs['xlabel'])
-    axisL.set_ylabel(kwargs['ylabel'][0])
-    axisR.set_ylabel(kwargs['ylabel'][1])
-    
-    axisL.set_xscale(kwargs['xscale'])
-    axisL.set_yscale(kwargs['yscale'][0])
-    axisR.set_yscale(kwargs['yscale'][1])
-    
-    axisL.set_title(kwargs['title'])
-    axisL.legend([kwargs['legend'][0]], loc='lower left')
-    axisR.legend([kwargs['legend'][1]], loc='lower right')
-
-    plt.setp(axisL, **setpL)
-    plt.setp(axisR, **setpR)
-    
-    axisL.grid()
-    plt.tight_layout()
-    graph = plt.gcf()
-
-    # Save plot:
-    if kwargs['save'] == True:
-        if kwargs['save_folder'] == 'default':
-            kwargs['save_folder'] = os.path.dirname(__file__)
-        title = kwargs['title']
-        graph.savefig(os.path.join(kwargs['save_folder'], f'{title}'+'.png'))
-    else:
-        plt.show()
-
-    return
-
-
-def generate_ticks_oct():
-    
-    """
-    Generates a list of ticks and anotherone of ticklabels that can both be used in matplotlib.pyplot.setp() method. The ticks are set to octaves, and defined according to UNE-EN 61260.
-
-    Parameters
-    ----------
-
-    none
-
-    Returns
-    -------
-
-    ticks : LIST
-
-    ticklabels : LIST
-    """
-    
-    ticks = []
-    ticklabels = []
-    
-    for i in range(0, 10, 1):
-            ticks.append(31.25*(2**i))
-            if 31.25*(2**i) < 1000:
-                ticklabels.append(str(int(31.25*(2**i))))
-            else:
-                ticklabels.append(str(int((31.25/1000)*(2**i)))+'k')
-    
-    return ticks, ticklabels
+        return ticks_list, tick_labels
 
 
 def plot_sin_list(tuples_list, **plot_kwargs):
-    
     """
     Plots a list of sine waveforms in an interval determined by the average period of all the signals.
 

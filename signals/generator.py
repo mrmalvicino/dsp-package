@@ -35,7 +35,7 @@ class Generator:
         return samples_array
 
 
-    def time_array(self, wave_frequency = 1000, amount_of_periods = 1, sampling_rate = 44100):
+    def time_array(self, wave_frequency = 1000, amount_of_periods = 1, sampling_rate = 44100, is_closed_interval = True):
         """
         Generates a time array with sampling time values to use as the domain of a signal.
 
@@ -51,7 +51,8 @@ class Generator:
         wave_period = 1 / wave_frequency
         interval_lenght = amount_of_periods * wave_period
         step = 1 / sampling_rate
-        time_array = np.arange(0, interval_lenght, step)
+        last_sample = int(is_closed_interval) * step
+        time_array = np.arange(0, interval_lenght + last_sample, step)
 
         return time_array
 
@@ -167,7 +168,7 @@ class Generator:
 
         return signal
 
-    def sinewave(time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
+    def sinewave(self, time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
         """
         Generates a sinewave.
 
@@ -188,37 +189,6 @@ class Generator:
         return sine_array
 
 def gen_sin_list(*frequencies, A=1, f_s = 44100, is_closed_interval = True):
-    """
-    Generates a sine wave for each input frequency.
-
-    Parameters
-    ----------
-    
-    *frequencies : UNPACKED TUPLE OF FLOATS
-        Unpacked tuple containing the frequency values of the sine waves which are going to be generated.
-    
-    A : FLOAT, optional
-        Amplitude of all the sine waves which are going to be generated. The default is 1.
-    
-    f_s : FLOAT, optional
-        Sampling frequency rate. The default is 44100.
-        
-    is_closed_interval : BOOL, optional
-        Determines whether the bound of the samples interval belongs to it or not. The default is True.
-
-    Returns
-    -------
-    
-    output : LIST OF TUPLES
-        For each sine wave generated, the function returns a list of one tuple for every signal.
-        Each tuple has three components that contains the time vector, the amplitude vector and a label respectively.
-        Thus, the output for n signals generated would be:
-        [ (time_1, amplitude_1, label_1) , (time_2, amplitude_2, label_2) , ... , (time_n, amplitude_n, label_n) ]
-        Where time_i and amplitude_i are numpy arrays which holds the signal data and label_i is a string with descriptive porposes, being i a natural number between 1 and n.
-        The average frequency is specified between brackets in its' label.
-
-    """
-    
     t = np.arange(0, 1/closest_to_average(frequencies) + int(is_closed_interval)/f_s , 1/f_s)
     
     output = []
