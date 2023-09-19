@@ -86,9 +86,7 @@ class Graph:
             'xticklabels': 'default',
             'yticklabels': ('default','default'),
             'xlim': 'default',
-            'ylim': ('default','default'),
-            'save': False,
-            'save_folder': 'default'
+            'ylim': ('default','default')
         }
 
         # Overwrite the possible **kwargs with the actual inputs:
@@ -196,47 +194,3 @@ class Graph:
                     tick_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
 
         return ticks_list, tick_labels
-
-
-def plot_sin_list(tuples_list, **plot_kwargs):
-    """
-    Plots a list of sine waveforms in an interval determined by the average period of all the signals.
-
-    Parameters
-    ----------
-    tuples_list : LIST OF TUPLES
-        List of tuples containing each tuple the x-y axes data in the first two components.
-        The third component of each tuple have to be a string carring the label of the respective signal, with the following format:
-            'sin_N_freq_FHz' being N any natural number and F the frequency of the sinewave.
-        The label of the sinewave with the average frequency must have the word 'ave' between brackets, have no spaces between characters and have the following format:
-            'sin_N_freq_FHz(ave)' being N any natural number and F the frequency of the sinewave.
-    
-    **plot_kwargs : UNPACKED DICT
-        Arguments for the matplotlib.plot() function.
-
-    Returns
-    -------
-    
-    None.
-
-    """
-    
-    plt.grid()
-    plt.xlabel("Time [s]")
-    plt.ylabel("Amplitude")
-    
-    labels = []
-    
-    for i in range(0, len(tuples_list), 1):
-        x = tuples_list[i][0]
-        y = tuples_list[i][1]
-        plt.plot(x,y, **plot_kwargs)
-        labels.append(tuples_list[i][2])
-        if 'ave' in tuples_list[i][2]:
-            cut = len(tuples_list[i][2]) - 7
-            freq_ave = float(tuples_list[i][2][11:cut])
-    
-    plt.xticks(np.linspace(0, 1 / freq_ave, 5))
-    plt.legend(labels, loc = "upper right")
-
-    return

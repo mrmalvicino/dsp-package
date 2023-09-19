@@ -187,20 +187,3 @@ class Generator:
         sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
         return sine_array
-
-def gen_sin_list(*frequencies, A=1, f_s = 44100, is_closed_interval = True):
-    t = np.arange(0, 1/closest_to_average(frequencies) + int(is_closed_interval)/f_s , 1/f_s)
-    
-    output = []
-    
-    for i in range(0, len(frequencies), 1):
-        omega_i = 2*np.pi*frequencies[i]
-        y_i = A*np.sin(omega_i*t)
-        if frequencies[i] == closest_to_average(frequencies):
-            label = f'sin_{i+1}_freq_{frequencies[i]}Hz(ave)'
-        else:
-            label= f'sin_{i+1}_freq_{frequencies[i]}Hz'
-        signal_i = (t , y_i , label)
-        output.append(signal_i)
-    
-    return output

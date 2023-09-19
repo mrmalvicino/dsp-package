@@ -1,4 +1,3 @@
-"""
 # electricidad
 
 from matplotlib import pyplot as plt
@@ -35,149 +34,44 @@ plt.grid()
 plt.xlabel("x")
 plt.ylabel("y")
 plt.legend()
+# fineleectricidad
 
 
+def gen_sin_list(*frequencies, A=1, f_s = 44100, is_closed_interval = True):
+    t = np.arange(0, 1/closest_to_average(frequencies) + int(is_closed_interval)/f_s , 1/f_s)
 
-"""
+    output = []
 
-def plot_dual_axis(x, y, **kwargs):
-    """
-    Generates a plot using matplotlib.
+    for i in range(0, len(frequencies), 1):
+        omega_i = 2*np.pi*frequencies[i]
+        y_i = A*np.sin(omega_i*t)
 
-    Args:
-        x (numpy.ndarray) Data for the horizontal axis.
-        y (tuple of numpy.ndarray) Data for the vertical axes. A two dimentions tuple is expected, containing the data for the left and right vertical axes in each component respectively.
-        **kwargs (unpacked dictionary) Object orientated kwargs values for matplotlib.pyplot.plot() and matplotlib.pyplot.setp() methods. Bidimentional tuples are expected for the keys that involves the vertical axes. For example, the scale could be determined by defining the dictionary kwargs = {'xscale': 'linear', 'yscale': ('logit','log')} and using it into plot_dual_axis(x, y, **kwargs).
-
-    Returns:
-        none
-    """
-
-    # Store the **kwargs in a new dictionary:
-    user_inputs = kwargs
-
-    # Define possible **kwargs:
-    kwargs = {
-        'figsize': (10,5),
-        'title': 'Plot',
-        'xlabel': '',
-        'ylabel': ('',''),
-        'xscale': 'linear',
-        'yscale': ('linear','linear'),
-        'legend': ('',''),
-        'xticks': 'default',
-        'yticks': ('default','default'),
-        'xticklabels': 'default',
-        'yticklabels': ('default','default'),
-        'xlim': 'default',
-        'ylim': ('default','default'),
-        'save': False,
-        'save_folder': 'default'
-    }
-
-    # Overwrite the possible **kwargs with the actual inputs:
-    for key, value in user_inputs.items():
-        if key in kwargs:
-            kwargs[key] = value
-    
-    # Split the plt.setp kwargs into 2 dictionaries:
-    setpL = dict()
-    setpR = dict()
-
-    setpL_keys = ['yticks', 'yticklabels', 'ylim', 'xticks', 'xticklabels', 'xlim']
-    setpR_keys = ['yticks', 'yticklabels', 'ylim']
-
-    for key in setpL_keys:
-        if len(kwargs[key]) == 2:
-            if kwargs[key][0] != 'default':
-                setpL.update({key: kwargs[key][0]})
+        if frequencies[i] == closest_to_average(frequencies):
+            label = f'sin_{i+1}_freq_{frequencies[i]}Hz(ave)'
         else:
-            if kwargs[key] != 'default':
-                setpL.update({key: kwargs[key]})
+            label= f'sin_{i+1}_freq_{frequencies[i]}Hz'
 
-    for key in setpR_keys:
-        if len(kwargs[key]) == 2:
-            if kwargs[key][1] != 'default':
-                setpR.update({key: kwargs[key][1]})
+        signal_i = (t , y_i , label)
+        output.append(signal_i)
 
-    # Generate plot:
-    fig, (axisL) = plt.subplots(1,1, figsize=kwargs['figsize'])
-    axisR = axisL.twinx()
-    
-    axisL.plot(x, y[0], color='blue')
-    axisR.plot(x, y[1], color='red', linestyle='--')
-    
-    axisL.set_xlabel(kwargs['xlabel'])
-    axisL.set_ylabel(kwargs['ylabel'][0])
-    axisR.set_ylabel(kwargs['ylabel'][1])
-    
-    axisL.set_xscale(kwargs['xscale'])
-    axisL.set_yscale(kwargs['yscale'][0])
-    axisR.set_yscale(kwargs['yscale'][1])
-    
-    axisL.set_title(kwargs['title'])
-    axisL.legend([kwargs['legend'][0]], loc='lower left')
-    axisR.legend([kwargs['legend'][1]], loc='lower right')
+    return output
 
-    plt.setp(axisL, **setpL)
-    plt.setp(axisR, **setpR)
-    
-    axisL.grid()
-    plt.tight_layout()
-    graph = plt.gcf()
-
-    # Save plot:
-    if kwargs['save'] == True:
-        if kwargs['save_folder'] == 'default':
-            kwargs['save_folder'] = os.path.dirname(__file__)
-        title = kwargs['title']
-        graph.savefig(os.path.join(kwargs['save_folder'], f'{title}'+'.png'))
-    else:
-        plt.show()
-
-    return
-
-
-def save(param, **kwargs):
-    
+def plot_sin_list(tuples_list, **plot_kwargs):
     """
-    Saves a given numpy array or matplotlib plot.
-    
+    Plots a list of sine waveforms in an interval determined by the average period of all the signals.
+
     Parameters
     ----------
+    tuples_list : LIST OF TUPLES
+        List of tuples containing each tuple the x-y axes data in the first two components.
+        The third component of each tuple have to be a string carring the label of the respective signal, with the following format:
+            'sin_N_freq_FHz' being N any natural number and F the frequency of the sinewave.
+        The label of the sinewave with the average frequency must have the word 'ave' between brackets, have no spaces between characters and have the following format:
+            'sin_N_freq_FHz(ave)' being N any natural number and F the frequency of the sinewave.
     
-    param : FIGURE OR ARRAY
-        Object that is going to be saved.
-    
-    **kwargs : UNPACKED DICTIONARY
-    
-        **save_kwargs : UNPACKED DICTIONARY
-            Kwargs for internal use.
-    
-            file_dir : STRING
-                Path of the directory where the file is going to be saved.
-    
-            file_name : STRING
-                Name of the file which is going to be saved.
-    
-            ask_for_confirmation : BOOLEAN
-                Determines whether the script should ask for user input confirmation.
-    
-        **savefig_kwargs : UNPACKED DICTIONARY
-            Kwargs for the savefig() method.
-    
-            bbox_inches : STRING
-    
-            dpi : INTEGER
-    
-            transparent : BOOLEAN
-    
-    Raises
-    ------
-    
-    ValueError
-        Invalid input.
-    
+    **plot_kwargs : UNPACKED DICT
+        Arguments for the matplotlib.plot() function.
+
     Returns
     -------
     
@@ -185,34 +79,22 @@ def save(param, **kwargs):
 
     """
     
-    save_kwargs = {'file_dir': os.path.dirname(__file__), 'file_name': 'saved_by_' + os.getlogin(), 'ask_for_confirmation': False}
+    plt.grid()
+    plt.xlabel("Time [s]")
+    plt.ylabel("Amplitude")
     
-    for key, value in kwargs.items():
-        if key in save_kwargs and value != save_kwargs[key]:
-            save_kwargs[key] = value
+    labels = []
     
-    if save_kwargs['ask_for_confirmation'] == True:
-        save = 'ask'
-    else:
-        save = 'y'
+    for i in range(0, len(tuples_list), 1):
+        x = tuples_list[i][0]
+        y = tuples_list[i][1]
+        plt.plot(x,y, **plot_kwargs)
+        labels.append(tuples_list[i][2])
+        if 'ave' in tuples_list[i][2]:
+            cut = len(tuples_list[i][2]) - 7
+            freq_ave = float(tuples_list[i][2][11:cut])
+    
+    plt.xticks(np.linspace(0, 1 / freq_ave, 5))
+    plt.legend(labels, loc = "upper right")
 
-    while save != 'y' and save != 'n':
-        save = input('Do you really want to save? [y/n] ')
-    
-    if save == 'y':
-        if type(param) == plt.Figure:
-            savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-            
-            for key, value in kwargs.items():
-                if key in savefig_kwargs and value != savefig_kwargs[key]:
-                    savefig_kwargs[key] = value
-            
-            param.savefig(os.path.join(save_kwargs['file_dir'], save_kwargs['file_name'] + '.png'), **savefig_kwargs)
-        
-        elif type(param) == np.ndarray:
-            np.save(os.path.join(save_kwargs['file_dir'], save_kwargs['file_name']), param)
-        
-        else:
-            raise ValueError(f'{type(param)} input not supported.')
-    
     return

@@ -3,7 +3,7 @@ import numpy as np
 import datetime
 
 
-def root_dir(param = 0, open_root_dir = False):
+def get_root_dir(param = 0, open_root_dir = False):
     """
     Traces a folder relative to where the script is being executed. Defines this folder as "root directory" and returns it absolute path.
 
@@ -56,7 +56,7 @@ def save_plot(graph, **kwargs):
 
     save_kwargs = {
         'file_dir': os.path.dirname(__file__),
-        'file_name': datetime.datetime.now() + '_by_' + os.getlogin(),
+        'file_name': str(datetime.datetime.now()) + ' by ' + os.getlogin(),
     }
 
     for key, value in kwargs.items():
@@ -94,7 +94,7 @@ def save_array(array, **kwargs):
 
     save_kwargs = {
         'file_dir': os.path.dirname(__file__),
-        'file_name': datetime.datetime.now() + '_by_' + os.getlogin()
+        'file_name': str(datetime.datetime.now()) + ' by ' + os.getlogin()
     }
 
     for key, value in kwargs.items():
