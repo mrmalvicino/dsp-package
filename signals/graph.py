@@ -1,25 +1,98 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import os
-import sys
+from functions import make_list
 
-root_dir = os.path.dirname(__file__)
-python_functions_path = os.path.realpath(os.path.join(root_dir, '..', 'python-functions'))
-sys.path.insert(0, python_functions_path)
+discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
-import python_functions as pyfun
+class Graph:
+    """
+    Provides methods for plotting signals using Matplotlib library.
+    """
 
-def plot(x, y, **kwargs):
-    plt.figure(figsize=(8,4))
-    plt.plot(x,y, **kwargs)
-    plt.grid()
-    plt.xlabel("x")
-    plt.ylabel("y")
 
-    return
+    def __init__(self):
+        """
+        Constructs a Graph object with default settings.
+        """
+        pass
 
-def plot_LR(x, y, **kwargs):
-    
+
+    def multiple_overlaids(self, x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
+        """
+        Generates a single graph of multiple signals one over each other.
+
+        Args:
+            x_data (numpy.ndarray) Horizontal axis data.
+            y_data_list (list of numpy arrays) Data of each signal per component.
+            y_legends_list (list of strings) Legend of each signal per component.
+            is_discrete (bool, optional) Determines plotting styles depending on the horizontal domain. Default is False.
+            **kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
+
+        Returns:
+            (matplotlib figure) Graph object
+        """
+
+        if len(y_data_list) != len(y_legends_list):
+            raise ValueError('There are not as many signals as legends.')
+
+        plt.figure(figsize=(8,4))
+        plt.grid()
+
+        if is_discrete == False:
+            plt.xlabel("Time [s]")
+            plt.xticks(x_data)
+        else:
+            plt.xlabel("Samples [n]")
+            kwargs = discrete_kwargs
+
+            if len(x_data) < 21:
+                plt.xticks(x_data)
+            else:
+                plt.xticks(self.generate_ticks(x_data, 21))
+
+        plt.ylabel("Amplitude")
+
+        for i in range(0, len(y_data_list), 1):
+            y_data = y_data_list[i]
+            plt.plot(x_data, y_data, **kwargs)
+
+        plt.legend(y_legends_list, loc = "upper right")
+        graph = plt.gcf()
+
+        return graph
+
+
+    def generate_ticks(self, samples_array, amount_of_ticks = 20):
+        """
+        Generates a list of N ticks that are simetrically distributed along samples_array and can be used in matplotlib.pyplot.setp() method.
+
+        Args:
+        samples_array (list) Array like data from where the ticks will be extracted.
+        amount_of_ticks (int, optional) Amount of ticks which are going to be extracted from the input data. Default is 20.
+
+        Returns:
+            (list) List of generated ticks.
+        """
+
+        samples_array = make_list(samples_array)
+        ticks = []
+
+        if samples_array != []:
+            if len(samples_array) % 2 != 0:
+                del samples_array[-1] # Set samples_array to even lenght
+
+            while len(samples_array) % amount_of_ticks != 0:
+                amount_of_ticks = amount_of_ticks - 1 # Set amount_of_ticks to greatest common divisor
+
+            ticks = [None] * amount_of_ticks
+            K = int(len(samples_array) / amount_of_ticks)
+
+            for i in range(1, amount_of_ticks + 1, 1):
+                ticks[i - 1] = samples_array[K * i - 1]
+
+        return ticks
+
+
+def dual_axis(x, y, **kwargs):
     """
     Generates a plot using matplotlib.
 
@@ -128,46 +201,7 @@ def plot_LR(x, y, **kwargs):
     return
 
 
-def gen_ticks(n, N=20):
-    
-    """
-    Generates a list of N ticks that are simetrically distributed along n and can be used in matplotlib.pyplot.setp() method.
-
-    Parameters
-    ----------
-
-    n : LIST
-        Array like data from where the ticks will be extracted.
-    
-    N : INTEGER
-        Amount of ticks which are going to be extracted from the input data.
-
-    Returns
-    -------
-
-    ticks : LIST
-    """
-    
-    n = pyfun.make_list(n)
-    ticks = []
-    
-    if n != []:    
-        if len(n)%2 != 0:
-            del n[-1] # Set n to even lenght
-        
-        while len(n)%N != 0:
-            N = N - 1 # Set N to greatest common divisor
-        
-        ticks = [None]*N
-        K = int(len(n)/N)
-        
-        for i in range(1, N+1, 1):
-            ticks[i-1] = n[K*i-1]
-    
-    return ticks
-
-
-def gen_ticks_oct():
+def generate_ticks_oct():
     
     """
     Generates a list of ticks and anotherone of ticklabels that can both be used in matplotlib.pyplot.setp() method. The ticks are set to octaves, and defined according to UNE-EN 61260.
@@ -237,7 +271,7 @@ def plot_sin_list(tuples_list, **plot_kwargs):
             cut = len(tuples_list[i][2]) - 7
             freq_ave = float(tuples_list[i][2][11:cut])
     
-    plt.xticks(np.linspace(0, 1/freq_ave, 5))
-    plt.legend(labels, loc="upper right")
+    plt.xticks(np.linspace(0, 1 / freq_ave, 5))
+    plt.legend(labels, loc = "upper right")
 
     return
