@@ -1,6 +1,7 @@
 import numpy as np
 from functions import closest_to_average
 
+
 class Generator:
     """
     Provides methods for generating signals using Numpy library.

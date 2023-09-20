@@ -1,9 +1,14 @@
+#####################
+## SIGNALS PACKAGE ##
+#####################
+
 import os
 import sys
 
 root_dir = os.getcwd()
-new_path = os.path.realpath(os.path.join(root_dir, 'signals'))
-sys.path.insert(0, new_path)
+output_dir = os.path.join(root_dir, 'output')
+signals_dir = os.path.realpath(os.path.join(root_dir, 'signals'))
+sys.path.insert(0, signals_dir)
 
 #################################
 ## Generator and Graph classes ##
@@ -48,10 +53,10 @@ sinewave_graph = graph.plot_multiple_overlaids(time_array, y_data_list, y_legend
 # List of sinewaves
 
 list_of_tuples = generator.sinewaves_list(200, 2000, 500)
-sinewaves_list_graph = graph.sinewaves_list(list_of_tuples)
+sinewaves_list_graph = graph.plot_sinewaves_list(list_of_tuples)
 
 # Save arrays and graph
 
-save_plot(sinewave_graph, file_dir = os.path.join(root_dir, 'output'), file_name = 'sinewaves_plot')
-save_array(samples_array, file_dir = os.path.join(root_dir, 'output'), file_name = 'sq_samples')
-save_array(discrete_signal, file_dir = os.path.join(root_dir, 'output'), file_name = 'sq_amplitude')
+save_plot(sinewave_graph, file_dir = output_dir, file_name = 'sinewaves_plot')
+save_array(samples_array, file_dir = output_dir, file_name = 'sq_samples')
+save_array(discrete_signal, file_dir = output_dir, file_name = 'sq_amplitude')

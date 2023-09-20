@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from functions import to_list
 
-discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
 class Graph:
     """
@@ -10,10 +9,16 @@ class Graph:
     """
 
 
-    def __init__(self):
+    def __init__(self, discrete_kwargs = None):
         """
         Constructs a Graph object with default settings.
         """
+
+        if discrete_kwargs is None:
+            discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
+
+        self.discrete_kwargs = discrete_kwargs
+
         pass
 
 
@@ -40,7 +45,7 @@ class Graph:
 
         if is_discrete == True:
             plt.xlabel("Samples [n]")
-            kwargs = discrete_kwargs
+            kwargs = self.discrete_kwargs
             plt.xticks(self.generate_ticks(x_data, 21))
         else:
             plt.xlabel("Time [s]")
@@ -144,7 +149,7 @@ class Graph:
         return graph
 
 
-    def sinewaves_list(self, sinewaves_list, **plot_kwargs):
+    def plot_sinewaves_list(self, sinewaves_list, **plot_kwargs):
         """
         Plots a list of sine waveforms in an interval determined by the average period of all the signals.
 

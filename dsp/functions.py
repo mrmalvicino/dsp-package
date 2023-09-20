@@ -280,3 +280,25 @@ def matrix_to_list(list_input:list):
         list_output = list_input
 
     return list_output
+
+
+    def load_signal(path):
+        """
+        Loads a signal from a NumPy binary file.
+
+        Args:
+            path (string) The file path to the NumPy binary file containing the signal data. The path should include the file name with the .npy extension.
+
+        Returns:
+            signal_frequency (ndarray) An array representing the signal's frequency values.
+            signal_amplitude (ndarray) An array representing the signal's amplitude values.
+            signal_phase (ndarray) An array representing the signal's phase values.
+        """
+
+        signal = np.load(path)
+
+        signal_frequency = signalA[0,:]
+        signal_amplitude = signalA[1,:]
+        signal_phase = signalA[2,:]
+
+        return signal_frequency, signal_amplitude, signal_phase

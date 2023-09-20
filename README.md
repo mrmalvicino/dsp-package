@@ -1,3 +1,3 @@
-# Signals processing
+# Digital Signal Processing
 
-Python functions for signals processing.
+Python package for signals processing.
