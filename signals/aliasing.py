@@ -11,7 +11,7 @@ class Aliasing:
         """
         pass
 
-    def frequencies_sum(frequencies, sampling, duration):
+    def frequencies_sum(self, frequencies, sampling, duration):
         """
         Performs the sum of the sinusoidal signals with the frequencies entered, with a number of samples entered and with a duration entered.
 
