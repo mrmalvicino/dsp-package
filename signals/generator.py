@@ -35,24 +35,42 @@ class Generator:
         return samples_array
 
 
-    def time_array(self, wave_frequency = 1000, amount_of_periods = 1, sampling_rate = 44100, is_closed_interval = True):
+    def arange_time_array(self, wave_frequency = 200, sampling_rate = 320000, is_closed_interval = True):
         """
-        Generates a time array with sampling time values to use as the domain of a signal.
+        Generates an array of time samples that represent one period of a given wave.
 
         Args:
             wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-            amount_of_periods (int, optional) The number of periods to generate (default is 1).
             sampling_rate (int, optional) The sampling rate in samples per second (default is 44100 samples per second).
+            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
         Returns:
             time_array (numpy.ndarray) An array containing sampling time values.
         """
 
         wave_period = 1 / wave_frequency
-        interval_lenght = amount_of_periods * wave_period
         step = 1 / sampling_rate
         last_sample = int(is_closed_interval) * step
-        time_array = np.arange(0, interval_lenght + last_sample, step)
+        time_array = np.arange(0, wave_period + last_sample, step)
+
+        return time_array
+
+
+    def linspace_time_array(self, wave_frequency = 200, sampling_rate = 320000, is_closed_interval = True):
+        """
+        Generates an array of time samples that represent one period of a given wave.
+
+        Args:
+            wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
+            sampling_rate (int, optional) The sampling rate in samples per second (default is 44100 samples per second).
+            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
+
+        Returns:
+            time_array (numpy.ndarray) An array containing sampling time values.
+        """
+
+        wave_period = 1 / wave_frequency
+        time_array = np.linspace(0, wave_period, int(sampling_rate / wave_frequency), endpoint = is_closed_interval)
 
         return time_array
 
@@ -181,9 +199,40 @@ class Generator:
         Returns:
             (numpy.ndarray) Array containing the generated sine wave.
         """
-
+ 
         omega = 2 * np.pi * wave_frequency
         phase_rad = phase_deg * (np.pi / 180)
         sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
         return sine_array
+
+
+    def sinewaves_list(self, *frequencies, sampling_rate = 320000, is_closed_interval = True):
+        """
+        Generates a list of sine waves with different frequencies.
+
+        Args:
+            *frequencies (float) Frequencies (in Hertz) of the sine waves.
+            sampling_rate (int, optional) The sampling rate in samples per second (default is 320000 samples per second).
+            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
+
+        Returns:
+            sinewaves_list (list) A list of tuples, where each tuple contains the time values, the corresponding sine wave signal, and a legend.
+        """
+
+        ave_frequency = closest_to_average(frequencies)
+        time_array = self.arange_time_array(ave_frequency, sampling_rate, is_closed_interval)
+        sinewaves_list = []
+
+        for i in range(0, len(frequencies), 1):
+            sinewave_i = self.sinewave(time_array, frequencies[i])
+
+            if frequencies[i] == ave_frequency:
+                legend_i = f'sin_{frequencies[i]}_Hz_ave'
+            else:
+                legend_i = f'sin_{frequencies[i]}_Hz'
+
+            signal_i = (time_array , sinewave_i , legend_i)
+            sinewaves_list.append(signal_i)
+
+        return sinewaves_list

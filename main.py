@@ -1,100 +1,57 @@
-# electricidad
-
-from matplotlib import pyplot as plt
-import numpy as np
 import os
 import sys
 
 root_dir = os.getcwd()
-gen_signals_path = os.path.realpath(os.path.join(root_dir, 'functions'))
-sys.path.insert(0, gen_signals_path)
-import gen_signals as gensig
+new_path = os.path.realpath(os.path.join(root_dir, 'signals'))
+sys.path.insert(0, new_path)
 
-wave_frequency = 50
-amount_of_periods = 1
-sampling_rate = 44100
+#################################
+## Generator and Graph classes ##
+#################################
 
-time_array = gensig.generateTimeArray(wave_frequency, amount_of_periods, sampling_rate)
+# Imports
 
-voltage_phase = 0
-voltage_amplitude = 1
+from functions import *
 
-voltage_signal = gensig.generateSine(time_array, wave_frequency, phase_deg = voltage_phase, wave_amplitude = voltage_amplitude)
+from generator import Generator
+generator = Generator()
 
-current_phase = 90
-current_amplitude = 0.3
+from graph import Graph
+graph = Graph()
 
-current_signal = gensig.generateSine(time_array, wave_frequency, phase_deg = current_phase, wave_amplitude = current_amplitude)
+# Square pulse
 
-plt.figure(figsize=(8,4))
-plt.plot(time_array, voltage_signal, label = "Voltage", color = "blue", linestyle = "-")
-plt.plot(time_array, current_signal, label = "Current", color = "red", linestyle = "-")
-plt.plot(time_array, voltage_signal * current_signal, label = "Power", color = "green", linestyle = "--")
-plt.grid()
-plt.xlabel("x")
-plt.ylabel("y")
-plt.legend()
-# fineleectricidad
+is_closed_interval = True
+starting_sample = 0
+ending_sample = 25
+turn_on = 5
+turn_off = 10
 
+samples_array = generator.samples_array(starting_sample, ending_sample, is_closed_interval)
+discrete_signal = generator.square_pulse(samples_array, turn_on, turn_off)
 
-def gen_sin_list(*frequencies, A=1, f_s = 44100, is_closed_interval = True):
-    t = np.arange(0, 1/closest_to_average(frequencies) + int(is_closed_interval)/f_s , 1/f_s)
+square_pulse_graph = graph.plot_multiple_overlaids(samples_array, [discrete_signal], ['Square pulse'], True)
 
-    output = []
+# Sinewaves with parameters
 
-    for i in range(0, len(frequencies), 1):
-        omega_i = 2*np.pi*frequencies[i]
-        y_i = A*np.sin(omega_i*t)
+time_array = generator.arange_time_array(wave_frequency = 200, is_closed_interval = True)
 
-        if frequencies[i] == closest_to_average(frequencies):
-            label = f'sin_{i+1}_freq_{frequencies[i]}Hz(ave)'
-        else:
-            label= f'sin_{i+1}_freq_{frequencies[i]}Hz'
+sine_array_1 = generator.sinewave(time_array, wave_frequency = 200)
+sine_array_2 = generator.sinewave(time_array, wave_frequency = 2000, wave_amplitude = 0.5)
+sine_array_3 = generator.sinewave(time_array, wave_frequency = 500, phase_deg = 90)
 
-        signal_i = (t , y_i , label)
-        output.append(signal_i)
+y_data_list = [sine_array_1, sine_array_2, sine_array_3]
+y_legends_list = ['200 Hz', '2k Hz', '500 Hz']
 
-    return output
+sinewave_graph = graph.plot_multiple_overlaids(time_array, y_data_list, y_legends_list)
 
-def plot_sin_list(tuples_list, **plot_kwargs):
-    """
-    Plots a list of sine waveforms in an interval determined by the average period of all the signals.
+# List of sinewaves
 
-    Parameters
-    ----------
-    tuples_list : LIST OF TUPLES
-        List of tuples containing each tuple the x-y axes data in the first two components.
-        The third component of each tuple have to be a string carring the label of the respective signal, with the following format:
-            'sin_N_freq_FHz' being N any natural number and F the frequency of the sinewave.
-        The label of the sinewave with the average frequency must have the word 'ave' between brackets, have no spaces between characters and have the following format:
-            'sin_N_freq_FHz(ave)' being N any natural number and F the frequency of the sinewave.
-    
-    **plot_kwargs : UNPACKED DICT
-        Arguments for the matplotlib.plot() function.
+list_of_tuples = generator.sinewaves_list(200, 2000, 500)
+sinewaves_list_graph = graph.sinewaves_list(list_of_tuples)
 
-    Returns
-    -------
-    
-    None.
+# Save arrays and graph
 
-    """
-    
-    plt.grid()
-    plt.xlabel("Time [s]")
-    plt.ylabel("Amplitude")
-    
-    labels = []
-    
-    for i in range(0, len(tuples_list), 1):
-        x = tuples_list[i][0]
-        y = tuples_list[i][1]
-        plt.plot(x,y, **plot_kwargs)
-        labels.append(tuples_list[i][2])
-        if 'ave' in tuples_list[i][2]:
-            cut = len(tuples_list[i][2]) - 7
-            freq_ave = float(tuples_list[i][2][11:cut])
-    
-    plt.xticks(np.linspace(0, 1 / freq_ave, 5))
-    plt.legend(labels, loc = "upper right")
-
-    return
+save_plot(sinewave_graph, file_dir = os.path.join(root_dir, 'output'), file_name = 'sinewaves_plot')
+save_array(samples_array, file_dir = os.path.join(root_dir, 'output'), file_name = 'sq_samples')
+save_array(discrete_signal, file_dir = os.path.join(root_dir, 'output'), file_name = 'sq_amplitude')

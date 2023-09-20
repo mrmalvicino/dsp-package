@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 from functions import to_list
 
@@ -143,6 +144,41 @@ class Graph:
         return graph
 
 
+    def sinewaves_list(self, sinewaves_list, **plot_kwargs):
+        """
+        Plots a list of sine waveforms in an interval determined by the average period of all the signals.
+
+        Args:
+            sinewaves_list (list of tuples) Each tuple contains the x-y axes data in the first two components. The third component of each tuple have to be a string carring the legend of the respective signal, with the following format: 'sin_freq_Hz' being 'freq' the frequency of the sinewave. The legend of the sinewave with the average frequency must have the word 'ave', with the following format: 'sin_freq_Hz_ave'.
+            **plot_kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
+
+        Returns:
+            (matplotlib figure) Graph.
+        """
+
+        plt.grid()
+        plt.xlabel("Time [s]")
+        plt.ylabel("Amplitude")
+
+        legends_list = []
+
+        for i in range(0, len(sinewaves_list), 1):
+            x = sinewaves_list[i][0]
+            y = sinewaves_list[i][1]
+            plt.plot(x,y, **plot_kwargs)
+            legends_list.append(sinewaves_list[i][2])
+
+            if 'ave' in sinewaves_list[i][2]: # Hardcoded 'ave' is the keyword that distincts the average frequency from the others
+                cut = len(sinewaves_list[i][2]) - 7 # Hardcoded 7 is the amount of characters from the end until the word 'freq'
+                ave_freq = float(sinewaves_list[i][2][4:cut]) # Hardcoded 4 is the amount of characters from the beginin until the word 'freq'
+
+        plt.xticks(np.linspace(0, 1 / ave_freq, 5))
+        plt.legend(legends_list, loc = "upper right")
+        graph = plt.gcf()
+
+        return graph
+
+
     def generate_ticks(self, samples_array, amount_of_ticks = 20):
         """
         Generates a list of N ticks that are simetrically distributed along samples_array and can be used in matplotlib.pyplot.setp() method.
@@ -187,10 +223,11 @@ class Graph:
         tick_labels = []
 
         for i in range(0, 10, 1):
-                ticks_list.append(31.25 * (2 ** i))
-                if 31.25 * (2 ** i) < 1000:
-                    tick_labels.append(str(int(31.25 * (2 ** i))))
-                else:
-                    tick_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
+            ticks_list.append(31.25 * (2 ** i))
+
+            if 31.25 * (2 ** i) < 1000:
+                tick_labels.append(str(int(31.25 * (2 ** i))))
+            else:
+                tick_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
 
         return ticks_list, tick_labels
