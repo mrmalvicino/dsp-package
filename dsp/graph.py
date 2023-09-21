@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from functions import to_list
+from dsp.functions import to_list
 
 
 class Graph:
@@ -17,7 +17,7 @@ class Graph:
         if discrete_kwargs is None:
             discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
-        self.discrete_kwargs = discrete_kwargs
+        self._discrete_kwargs = discrete_kwargs
 
         pass
 
@@ -45,7 +45,7 @@ class Graph:
 
         if is_discrete == True:
             plt.xlabel("Samples [n]")
-            kwargs = self.discrete_kwargs
+            kwargs = self._discrete_kwargs
             plt.xticks(self.generate_ticks(x_data, 21))
         else:
             plt.xlabel("Time [s]")

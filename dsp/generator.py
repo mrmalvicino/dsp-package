@@ -1,5 +1,5 @@
 import numpy as np
-from functions import closest_to_average
+from dsp.functions import closest_to_average
 
 
 class Generator:
@@ -36,7 +36,7 @@ class Generator:
         return samples_array
 
 
-    def arange_time_array(self, wave_frequency = 200, sampling_rate = 320000, is_closed_interval = True):
+    def arange_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = True):
         """
         Generates an array of time samples that represent one period of a given wave.
 
