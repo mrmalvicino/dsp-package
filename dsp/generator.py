@@ -22,7 +22,10 @@ class Generator:
         self.signal.fundamental_amplitude = fundamental_amplitude
         self.signal.fundamental_phase = fundamental_phase
         self.signal.time_array = self.arange_time_array(self.signal.fundamental_frequency)
+        self.signal.frequency_array = np.array([fundamental_frequency])
         self.signal.x_amplitude_array = self.sinewave_amplitude(self.signal.time_array, self.signal.fundamental_frequency, self.signal.fundamental_amplitude, self.signal.fundamental_phase)
+        self.signal.X_amplitude_array = np.array([fundamental_amplitude])
+        self.signal.phase_array = np.array([fundamental_phase])
 
         if description == None:
             description = f'sin{pretty_frequency(fundamental_frequency)}'

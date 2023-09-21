@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from dsp.signal import Signal
-from dsp.functions import to_list
+from dsp.functions import to_list, generate_sinewave_ticks, generate_phase_deg_ticks
 
 
 class Grapher:
@@ -13,6 +13,14 @@ class Grapher:
         self._signal = Signal()
 
     @property
+    def discrete_kwargs(self):
+        return self._discrete_kwargs
+
+    @discrete_kwargs.setter
+    def discrete_kwargs(self, discrete_kwargs):
+        self._discrete_kwargs = discrete_kwargs
+
+    @property
     def signal(self):
         return self._signal
 
@@ -21,9 +29,49 @@ class Grapher:
         self._signal = signal
 
 
-    def plot(self, signal):
-        plt.plot(signal.time_array, signal.amplitude_array)
-        return
+    def plot_signal(self, signal):
+        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=(6, 6))
+
+        ax1.plot(signal.time_array, signal.x_amplitude_array)
+        ax2.plot(signal.frequency_array, signal.X_amplitude_array, ** self.discrete_kwargs)
+        ax3.plot(signal.frequency_array, signal.phase_array, ** self.discrete_kwargs)
+
+        ax1.set_title('Waveform')
+        ax2.set_title('Spectrum Amplitude')
+        ax3.set_title('Spectrum Phase')
+
+        ax1.set_xlabel('Time [s]')
+        ax2.set_xlabel('Frequency [Hz]')
+        ax3.set_xlabel('Frequency [Hz]')
+
+        ax1.set_ylabel('x(t) Amplitude')
+        ax2.set_ylabel('X(f) Amplitude')
+        ax3.set_ylabel('Phase [deg]')
+
+        ax1.set_xscale('linear')
+        ax2.set_xscale('log')
+        ax3.set_xscale('log')
+
+        ax1.grid(True)
+        ax2.grid(True)
+        ax3.grid(True)
+
+        ax1.set_xticks(generate_sinewave_ticks(signal.fundamental_frequency))
+        ax2.set_xticks(self.generate_octaves()[0])
+        ax3.set_xticks(self.generate_octaves()[0])
+        ax3.set_yticks(generate_phase_deg_ticks(90))
+
+        ax2.set_xticklabels(self.generate_octaves()[1])
+        ax3.set_xticklabels(self.generate_octaves()[1])
+
+        ax1.legend([signal.description])
+        ax2.legend([signal.description])
+        ax3.legend([signal.description])
+
+        plt.tight_layout()
+        graph = plt.gcf()
+
+        return graph
 
 
     def plot_multiple_overlaids(self, x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
