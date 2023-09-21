@@ -167,7 +167,8 @@ def round_float(number_input, significant_digits = 3):
     else:
         int_digits = len(str(int(number_input))) - 1
 
-    dec_digits = len(str(number_input)) - int_digits - 1
+    amount_of_characters = len(str(number_input))
+    dec_digits = amount_of_characters - int_digits - 1
     number_input = number_input / 10 ** int_digits
     number_input = round(number_input, significant_digits)
     number_input = number_input * (10 ** int_digits)
@@ -368,3 +369,21 @@ def plot_sinewaves_list(self, sinewaves_list, **plot_kwargs):
     graph = plt.gcf()
 
     return graph
+
+def pretty_frequency(frequency):
+    if frequency < 1000:
+        pretty_number = round_float(frequency, 2)
+        pretty_frequency = str(pretty_number) + "Hz"
+
+    elif frequency < 10000:
+        pretty_number = round_float(frequency / 1000, 2)
+        pretty_number = "{:.1f}".format(pretty_number)
+        pretty_frequency = str(pretty_number) + "kHz"
+
+    else:
+        pretty_number = round_float(frequency / 1000, 3)
+        pretty_frequency = str(pretty_number) + "kHz"
+
+    pretty_frequency = pretty_frequency.replace(".0", "")
+
+    return pretty_frequency

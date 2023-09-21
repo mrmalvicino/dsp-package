@@ -1,6 +1,6 @@
 import numpy as np
 from dsp.signal import Signal
-from dsp.functions import closest_to_average
+from dsp.functions import closest_to_average, pretty_frequency
 
 
 class Generator:
@@ -17,12 +17,18 @@ class Generator:
         self._signal = signal
 
 
-    def sinewave(self, fundamental_frequency = 1000, description = "sin1kHz"):
-        self.signal.description = description
-        self.signal.waveform = "sinewave"
+    def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = None):
         self.signal.fundamental_frequency = fundamental_frequency
+        self.signal.fundamental_amplitude = fundamental_amplitude
+        self.signal.fundamental_phase = fundamental_phase
         self.signal.time_array = self.arange_time_array(self.signal.fundamental_frequency)
-        self.signal.amplitude_array = self.sinewave_amplitude(self.signal.time_array, self.signal.fundamental_frequency)
+        self.signal.x_amplitude_array = self.sinewave_amplitude(self.signal.time_array, self.signal.fundamental_frequency, self.signal.fundamental_amplitude, self.signal.fundamental_phase)
+
+        if description == None:
+            description = f'sin{pretty_frequency(fundamental_frequency)}'
+
+        self.signal.description = description
+
         return self.signal
 
 
@@ -89,7 +95,7 @@ class Generator:
 
     def unit_impulse_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, impulse_sample = 10):
         """
-        Generates a discrete unit impulse.
+        Generates the amplitude array for a discrete unit impulse.
 
         Args:
             samples_array (numpy.ndarray) Array with domain samples.
@@ -112,7 +118,7 @@ class Generator:
 
     def unit_step_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, step_sample = 10):
         """
-        Generates a discrete unit step.
+        Generates the amplitude array for a discrete unit step.
 
         Args:
             samples_array (numpy.ndarray) Array with domain samples.
@@ -134,7 +140,7 @@ class Generator:
 
     def square_pulse_amplitude(self, samples_array, turn_on = 5, turn_off = 15):
         """
-        Generates a discrete square pulse.
+        Generates the amplitude array for a discrete square pulse.
 
         Args:
             samples_array (numpy.ndarray) Array with domain samples.
@@ -157,7 +163,7 @@ class Generator:
 
     def triangular_pulse_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, half_base = 5):
         """
-        Generates a discrete triangular pulse.
+        Generates the amplitude array for a discrete triangular pulse.
 
         Args:
             samples_array (numpy.ndarray) Array with domain samples.
@@ -183,7 +189,7 @@ class Generator:
 
     def random_signal_amplitude(self, samples_array, mu_expectation = 0, sigma_deviation = 1):
         """
-        Generates a random discrete signal.
+        Generates the amplitude array for a random discrete signal.
 
         Args:
             samples_array (numpy.ndarray) Array with domain samples.
@@ -198,9 +204,9 @@ class Generator:
 
         return signal
 
-    def sinewave_amplitude(self, time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
+    def sinewave_amplitude(self, time_array, wave_frequency, wave_amplitude = 1, phase_deg = 0):
         """
-        Generates a sinewave.
+        Generates the amplitude array for a sinewave.
 
         Args:
             time_array (numpy.ndarray) Array of time values.

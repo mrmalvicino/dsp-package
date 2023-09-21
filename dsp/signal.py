@@ -3,30 +3,16 @@ import numpy as np
 
 class Signal:
 
-    def __init__(self, description = "", waveform = "", fundamental_frequency = 0, time_array = None, frequency_array = None, amplitude_array = None, phase_array = None):
-        self._description = description
-        self._waveform = waveform
+    def __init__(self, fundamental_frequency = 0, fundamental_amplitude = 0, fundamental_phase = 0, time_array = None, frequency_array = None, x_amplitude_array = None, X_amplitude_array = None, phase_array = None, description = None):
         self._fundamental_frequency = fundamental_frequency
+        self._fundamental_amplitude = fundamental_amplitude
+        self._fundamental_phase = fundamental_phase
         self._time_array = time_array
         self._frequency_array = frequency_array
-        self._amplitude_array = amplitude_array
+        self._x_amplitude_array = x_amplitude_array
+        self._X_amplitude_array = X_amplitude_array
         self._phase_array = phase_array
-
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, description):
         self._description = description
-
-    @property
-    def waveform(self):
-        return self._waveform
-
-    @waveform.setter
-    def waveform(self, waveform):
-        self._waveform = waveform
 
     @property
     def fundamental_frequency(self):
@@ -35,6 +21,22 @@ class Signal:
     @fundamental_frequency.setter
     def fundamental_frequency(self, fundamental_frequency):
         self._fundamental_frequency = fundamental_frequency
+
+    @property
+    def fundamental_amplitude(self):
+        return self._fundamental_amplitude
+
+    @fundamental_amplitude.setter
+    def fundamental_amplitude(self, fundamental_amplitude):
+        self._fundamental_amplitude = fundamental_amplitude
+
+    @property
+    def fundamental_phase(self):
+        return self._fundamental_phase
+
+    @fundamental_phase.setter
+    def fundamental_phase(self, fundamental_phase):
+        self._fundamental_phase = fundamental_phase
 
     @property
     def time_array(self):
@@ -53,12 +55,20 @@ class Signal:
         self._frequency_array = frequency_array
 
     @property
-    def amplitude_array(self):
-        return self._amplitude_array
+    def x_amplitude_array(self):
+        return self._x_amplitude_array
 
-    @amplitude_array.setter
-    def amplitude_array(self, amplitude_array):
-        self._amplitude_array = amplitude_array
+    @x_amplitude_array.setter
+    def x_amplitude_array(self, x_amplitude_array):
+        self._x_amplitude_array = x_amplitude_array
+
+    @property
+    def X_amplitude_array(self):
+        return self._X_amplitude_array
+
+    @X_amplitude_array.setter
+    def X_amplitude_array(self, X_amplitude_array):
+        self._X_amplitude_array = X_amplitude_array
 
     @property
     def phase_array(self):
@@ -67,3 +77,11 @@ class Signal:
     @phase_array.setter
     def phase_array(self, phase_array):
         self._phase_array = phase_array
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, description):
+        self._description = description
