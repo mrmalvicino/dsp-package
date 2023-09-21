@@ -1,18 +1,27 @@
 import numpy as np
 from dsp.functions import closest_to_average
+from dsp.signal import Signal
 
 
 class Generator:
     """
-    Provides methods for generating signals using Numpy library.
+    Represents a signal generator.
     """
-
 
     def __init__(self):
         """
-        Constructs an Aliasing object with default settings.
+        Constructs a Generator object with default settings.
         """
-        pass
+
+        self._signal = Signal()
+
+    @property
+    def signal(self):
+        return self._signal
+
+    @signal.setter
+    def signal(self, signal):
+        self._signal = signal
 
 
     def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = True):
@@ -57,7 +66,7 @@ class Generator:
         return time_array
 
 
-    def linspace_time_array(self, wave_frequency = 200, sampling_rate = 320000, is_closed_interval = True):
+    def linspace_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = True):
         """
         Generates an array of time samples that represent one period of a given wave.
 

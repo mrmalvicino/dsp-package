@@ -6,13 +6,14 @@ class Signal:
     Represents a signal.
     """
 
-    def __init__(self, description = '', period = 0, time_array = None, frequency_array = None, amplitude_array = None, phase_array = None):
+    def __init__(self, description = 'sin1kHz', waveform = "sinewave", fundamental_frequency = 1000, time_array = None, frequency_array = None, amplitude_array = None, phase_array = None):
         """
-        Constructs a Signal object with default settings.
+        Constructs a Signal object.
         """
 
         self._description = description
-        self._period = period
+        self._waveform = waveform
+        self._fundamental_frequency = fundamental_frequency
         self._time_array = time_array
         self._frequency_array = frequency_array
         self._amplitude_array = amplitude_array
@@ -27,12 +28,20 @@ class Signal:
         self._description = description
 
     @property
-    def period(self):
-        return self._period
+    def waveform(self):
+        return self._waveform
 
-    @period.setter
-    def period(self, period):
-        self._period = period
+    @waveform.setter
+    def waveform(self, waveform):
+        self._waveform = waveform
+
+    @property
+    def fundamental_frequency(self):
+        return self._fundamental_frequency
+
+    @fundamental_frequency.setter
+    def fundamental_frequency(self, fundamental_frequency):
+        self._fundamental_frequency = fundamental_frequency
 
     @property
     def time_array(self):
