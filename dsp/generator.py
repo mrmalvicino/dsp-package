@@ -1,18 +1,11 @@
 import numpy as np
-from dsp.functions import closest_to_average
 from dsp.signal import Signal
+from dsp.functions import closest_to_average
 
 
 class Generator:
-    """
-    Represents a signal generator.
-    """
 
     def __init__(self):
-        """
-        Constructs a Generator object with default settings.
-        """
-
         self._signal = Signal()
 
     @property
@@ -22,6 +15,15 @@ class Generator:
     @signal.setter
     def signal(self, signal):
         self._signal = signal
+
+
+    def sinewave(self, fundamental_frequency = 1000, description = "sin1kHz"):
+        self.signal.description = description
+        self.signal.waveform = "sinewave"
+        self.signal.fundamental_frequency = fundamental_frequency
+        self.signal.time_array = self.arange_time_array(self.signal.fundamental_frequency)
+        self.signal.amplitude_array = self.sinewave_amplitude(self.signal.time_array, self.signal.fundamental_frequency)
+        return self.signal
 
 
     def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = True):
@@ -85,7 +87,7 @@ class Generator:
         return time_array
 
 
-    def unit_impulse(self, samples_array, starting_sample = -10, ending_sample = 10, impulse_sample = 10):
+    def unit_impulse_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, impulse_sample = 10):
         """
         Generates a discrete unit impulse.
 
@@ -108,7 +110,7 @@ class Generator:
         return signal
 
 
-    def unit_step(self, samples_array, starting_sample = -10, ending_sample = 10, step_sample = 10):
+    def unit_step_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, step_sample = 10):
         """
         Generates a discrete unit step.
 
@@ -130,7 +132,7 @@ class Generator:
         return signal
 
 
-    def square_pulse(self, samples_array, turn_on = 5, turn_off = 15):
+    def square_pulse_amplitude(self, samples_array, turn_on = 5, turn_off = 15):
         """
         Generates a discrete square pulse.
 
@@ -153,7 +155,7 @@ class Generator:
         return signal
 
 
-    def triangular_pulse(self, samples_array, starting_sample = -10, ending_sample = 10, half_base = 5):
+    def triangular_pulse_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, half_base = 5):
         """
         Generates a discrete triangular pulse.
 
@@ -179,7 +181,7 @@ class Generator:
         return signal
 
 
-    def random_signal(self, samples_array, mu_expectation = 0, sigma_deviation = 1):
+    def random_signal_amplitude(self, samples_array, mu_expectation = 0, sigma_deviation = 1):
         """
         Generates a random discrete signal.
 
@@ -196,7 +198,7 @@ class Generator:
 
         return signal
 
-    def sinewave(self, time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
+    def sinewave_amplitude(self, time_array, wave_frequency, phase_deg = 0, wave_amplitude = 1):
         """
         Generates a sinewave.
 
@@ -215,34 +217,3 @@ class Generator:
         sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
         return sine_array
-
-
-    def sinewaves_list(self, *frequencies, sampling_rate = 320000, is_closed_interval = True):
-        """
-        Generates a list of sine waves with different frequencies.
-
-        Args:
-            *frequencies (float) Frequencies (in Hertz) of the sine waves.
-            sampling_rate (int, optional) The sampling rate in samples per second (default is 320000 samples per second).
-            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
-
-        Returns:
-            sinewaves_list (list) A list of tuples, where each tuple contains the time values, the corresponding sine wave signal, and a legend.
-        """
-
-        ave_frequency = closest_to_average(frequencies)
-        time_array = self.arange_time_array(ave_frequency, sampling_rate, is_closed_interval)
-        sinewaves_list = []
-
-        for i in range(0, len(frequencies), 1):
-            sinewave_i = self.sinewave(time_array, frequencies[i])
-
-            if frequencies[i] == ave_frequency:
-                legend_i = f'sin_{frequencies[i]}_Hz_ave'
-            else:
-                legend_i = f'sin_{frequencies[i]}_Hz'
-
-            signal_i = (time_array , sinewave_i , legend_i)
-            sinewaves_list.append(signal_i)
-
-        return sinewaves_list

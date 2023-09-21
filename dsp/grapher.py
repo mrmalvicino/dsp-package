@@ -1,25 +1,29 @@
-import numpy as np
 import matplotlib.pyplot as plt
+from dsp.signal import Signal
 from dsp.functions import to_list
 
 
-class Graph:
-    """
-    Provides methods for plotting signals using Matplotlib library.
-    """
-
+class Grapher:
 
     def __init__(self, discrete_kwargs = None):
-        """
-        Constructs a Graph object with default settings.
-        """
-
         if discrete_kwargs is None:
             discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
         self._discrete_kwargs = discrete_kwargs
+        self._signal = Signal()
 
-        pass
+    @property
+    def signal(self):
+        return self._signal
+
+    @signal.setter
+    def signal(self, signal):
+        self._signal = signal
+
+
+    def plot(self, signal):
+        plt.plot(signal.time_array, signal.amplitude_array)
+        return
 
 
     def plot_multiple_overlaids(self, x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
@@ -144,41 +148,6 @@ class Graph:
         
         axisL.grid()
         plt.tight_layout()
-        graph = plt.gcf()
-
-        return graph
-
-
-    def plot_sinewaves_list(self, sinewaves_list, **plot_kwargs):
-        """
-        Plots a list of sine waveforms in an interval determined by the average period of all the signals.
-
-        Args:
-            sinewaves_list (list of tuples) Each tuple contains the x-y axes data in the first two components. The third component of each tuple have to be a string carring the legend of the respective signal, with the following format: 'sin_freq_Hz' being 'freq' the frequency of the sinewave. The legend of the sinewave with the average frequency must have the word 'ave', with the following format: 'sin_freq_Hz_ave'.
-            **plot_kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
-
-        Returns:
-            (matplotlib figure) Graph.
-        """
-
-        plt.grid()
-        plt.xlabel("Time [s]")
-        plt.ylabel("Amplitude")
-
-        legends_list = []
-
-        for i in range(0, len(sinewaves_list), 1):
-            x = sinewaves_list[i][0]
-            y = sinewaves_list[i][1]
-            plt.plot(x,y, **plot_kwargs)
-            legends_list.append(sinewaves_list[i][2])
-
-            if 'ave' in sinewaves_list[i][2]: # Hardcoded 'ave' is the keyword that distincts the average frequency from the others
-                cut = len(sinewaves_list[i][2]) - 7 # Hardcoded 7 is the amount of characters from the end until the word 'freq'
-                ave_freq = float(sinewaves_list[i][2][4:cut]) # Hardcoded 4 is the amount of characters from the beginin until the word 'freq'
-
-        plt.xticks(np.linspace(0, 1 / ave_freq, 5))
-        plt.legend(legends_list, loc = "upper right")
         graph = plt.gcf()
 
         return graph

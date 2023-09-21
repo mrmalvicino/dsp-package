@@ -2,15 +2,8 @@ import numpy as np
 
 
 class Signal:
-    """
-    Represents a signal.
-    """
 
-    def __init__(self, description = 'sin1kHz', waveform = "sinewave", fundamental_frequency = 1000, time_array = None, frequency_array = None, amplitude_array = None, phase_array = None):
-        """
-        Constructs a Signal object.
-        """
-
+    def __init__(self, description = "", waveform = "", fundamental_frequency = 0, time_array = None, frequency_array = None, amplitude_array = None, phase_array = None):
         self._description = description
         self._waveform = waveform
         self._fundamental_frequency = fundamental_frequency

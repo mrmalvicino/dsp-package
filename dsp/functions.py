@@ -282,23 +282,89 @@ def matrix_to_list(list_input:list):
     return list_output
 
 
-    def load_signal(path):
-        """
-        Loads a signal from a NumPy binary file.
+def load_signal(path):
+    """
+    Loads a signal from a NumPy binary file.
 
-        Args:
-            path (string) The file path to the NumPy binary file containing the signal data. The path should include the file name with the .npy extension.
+    Args:
+        path (string) The file path to the NumPy binary file containing the signal data. The path should include the file name with the .npy extension.
 
-        Returns:
-            signal_frequency (ndarray) An array representing the signal's frequency values.
-            signal_amplitude (ndarray) An array representing the signal's amplitude values.
-            signal_phase (ndarray) An array representing the signal's phase values.
-        """
+    Returns:
+        signal_frequency (ndarray) An array representing the signal's frequency values.
+        signal_amplitude (ndarray) An array representing the signal's amplitude values.
+        signal_phase (ndarray) An array representing the signal's phase values.
+    """
 
-        signal = np.load(path)
+    signal = np.load(path)
 
-        signal_frequency = signalA[0,:]
-        signal_amplitude = signalA[1,:]
-        signal_phase = signalA[2,:]
+    signal_frequency = signalA[0,:]
+    signal_amplitude = signalA[1,:]
+    signal_phase = signalA[2,:]
 
-        return signal_frequency, signal_amplitude, signal_phase
+    return signal_frequency, signal_amplitude, signal_phase
+
+
+def sinewaves_list(self, *frequencies, sampling_rate = 320000, is_closed_interval = True):
+    """
+    Generates a list of sine waves with different frequencies.
+
+    Args:
+        *frequencies (float) Frequencies (in Hertz) of the sine waves.
+        sampling_rate (int, optional) The sampling rate in samples per second (default is 320000 samples per second).
+        is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
+
+    Returns:
+        sinewaves_list (list) A list of tuples, where each tuple contains the time values, the corresponding sine wave signal, and a legend.
+    """
+
+    ave_frequency = closest_to_average(frequencies)
+    time_array = self.arange_time_array(ave_frequency, sampling_rate, is_closed_interval)
+    sinewaves_list = []
+
+    for i in range(0, len(frequencies), 1):
+        sinewave_i = self.sinewave(time_array, frequencies[i])
+
+        if frequencies[i] == ave_frequency:
+            legend_i = f'sin_{frequencies[i]}_Hz_ave'
+        else:
+            legend_i = f'sin_{frequencies[i]}_Hz'
+
+        signal_i = (time_array , sinewave_i , legend_i)
+        sinewaves_list.append(signal_i)
+
+    return sinewaves_list
+
+
+def plot_sinewaves_list(self, sinewaves_list, **plot_kwargs):
+    """
+    Plots a list of sine waveforms in an interval determined by the average period of all the signals.
+
+    Args:
+        sinewaves_list (list of tuples) Each tuple contains the x-y axes data in the first two components. The third component of each tuple have to be a string carring the legend of the respective signal, with the following format: 'sin_freq_Hz' being 'freq' the frequency of the sinewave. The legend of the sinewave with the average frequency must have the word 'ave', with the following format: 'sin_freq_Hz_ave'.
+        **plot_kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
+
+    Returns:
+        (matplotlib figure) Graph.
+    """
+
+    plt.grid()
+    plt.xlabel("Time [s]")
+    plt.ylabel("Amplitude")
+
+    legends_list = []
+
+    for i in range(0, len(sinewaves_list), 1):
+        x = sinewaves_list[i][0]
+        y = sinewaves_list[i][1]
+        plt.plot(x,y, **plot_kwargs)
+        legends_list.append(sinewaves_list[i][2])
+
+        if 'ave' in sinewaves_list[i][2]: # Hardcoded 'ave' is the keyword that distincts the average frequency from the others
+            cut = len(sinewaves_list[i][2]) - 7 # Hardcoded 7 is the amount of characters from the end until the word 'freq'
+            ave_freq = float(sinewaves_list[i][2][4:cut]) # Hardcoded 4 is the amount of characters from the beginin until the word 'freq'
+
+    plt.xticks(np.linspace(0, 1 / ave_freq, 5))
+    plt.legend(legends_list, loc = "upper right")
+    graph = plt.gcf()
+
+    return graph
