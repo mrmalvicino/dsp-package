@@ -3,16 +3,16 @@ import numpy as np
 
 class Signal:
 
-    def __init__(self, fundamental_frequency = 0, fundamental_amplitude = 0, fundamental_phase = 0, time_array = None, frequency_array = None, x_amplitude_array = None, X_amplitude_array = None, phase_array = None, description = None):
-        self._fundamental_frequency = fundamental_frequency
-        self._fundamental_amplitude = fundamental_amplitude
-        self._fundamental_phase = fundamental_phase
-        self._time_array = time_array
-        self._frequency_array = frequency_array
-        self._x_amplitude_array = x_amplitude_array
-        self._X_amplitude_array = X_amplitude_array
-        self._phase_array = phase_array
-        self._description = description
+    def __init__(self):
+        self._fundamental_frequency = -1
+        self._fundamental_amplitude = -1
+        self._fundamental_phase = -1
+        self._time_array = np.array([])
+        self._frequency_array = np.array([])
+        self._x_amplitude_array = np.array([])
+        self._X_amplitude_array = np.array([])
+        self._phase_array = np.array([])
+        self._description = "N/A"
 
     @property
     def fundamental_frequency(self):

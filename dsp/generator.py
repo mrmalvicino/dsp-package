@@ -6,33 +6,27 @@ from dsp.functions import closest_to_average, pretty_frequency
 class Generator:
 
     def __init__(self):
-        self._signal = Signal()
-
-    @property
-    def signal(self):
-        return self._signal
-
-    @signal.setter
-    def signal(self, signal):
-        self._signal = signal
+        pass
 
 
     def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = None):
-        self.signal.fundamental_frequency = fundamental_frequency
-        self.signal.fundamental_amplitude = fundamental_amplitude
-        self.signal.fundamental_phase = fundamental_phase
-        self.signal.time_array = self.arange_time_array(self.signal.fundamental_frequency)
-        self.signal.frequency_array = np.array([fundamental_frequency])
-        self.signal.x_amplitude_array = self.sinewave_amplitude(self.signal.time_array, self.signal.fundamental_frequency, self.signal.fundamental_amplitude, self.signal.fundamental_phase)
-        self.signal.X_amplitude_array = np.array([fundamental_amplitude])
-        self.signal.phase_array = np.array([fundamental_phase])
+        signal = Signal()
+
+        signal.fundamental_frequency = fundamental_frequency
+        signal.fundamental_amplitude = fundamental_amplitude
+        signal.fundamental_phase = fundamental_phase
+        signal.time_array = self.arange_time_array(signal.fundamental_frequency)
+        signal.frequency_array = np.array([fundamental_frequency])
+        signal.x_amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
+        signal.X_amplitude_array = np.array([fundamental_amplitude])
+        signal.phase_array = np.array([fundamental_phase])
 
         if description == None:
             description = f'sin{pretty_frequency(fundamental_frequency)}'
 
-        self.signal.description = description
+        signal.description = description
 
-        return self.signal
+        return signal
 
 
     def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = True):
