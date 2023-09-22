@@ -1,23 +1,18 @@
 import matplotlib.pyplot as plt
 from dsp.signal import Signal
-from dsp.functions import to_list, generate_sinewave_ticks, generate_phase_deg_ticks
+from dsp.ticks import Ticks
+from dsp.functions import to_list
 
 
 class Grapher:
 
     def __init__(self, discrete_kwargs = None):
+        self._signal = Signal()
+        self._ticks = Ticks()
+
         if discrete_kwargs is None:
             discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
 
-        self._discrete_kwargs = discrete_kwargs
-        self._signal = Signal()
-
-    @property
-    def discrete_kwargs(self):
-        return self._discrete_kwargs
-
-    @discrete_kwargs.setter
-    def discrete_kwargs(self, discrete_kwargs):
         self._discrete_kwargs = discrete_kwargs
 
     @property
@@ -27,6 +22,22 @@ class Grapher:
     @signal.setter
     def signal(self, signal):
         self._signal = signal
+
+    @property
+    def ticks(self):
+        return self._ticks
+
+    @ticks.setter
+    def ticks(self, ticks):
+        self._ticks = ticks
+
+    @property
+    def discrete_kwargs(self):
+        return self._discrete_kwargs
+
+    @discrete_kwargs.setter
+    def discrete_kwargs(self, discrete_kwargs):
+        self._discrete_kwargs = discrete_kwargs
 
 
     def plot_signal(self, signal):
@@ -56,13 +67,13 @@ class Grapher:
         ax2.grid(True)
         ax3.grid(True)
 
-        ax1.set_xticks(generate_sinewave_ticks(signal.fundamental_frequency))
-        ax2.set_xticks(self.generate_octaves()[0])
-        ax3.set_xticks(self.generate_octaves()[0])
-        ax3.set_yticks(generate_phase_deg_ticks(90))
+        ax1.set_xticks(self.ticks.sinewave_ticks(signal.fundamental_frequency))
+        ax2.set_xticks(self.ticks.octaves_ticks())
+        ax3.set_xticks(self.ticks.octaves_ticks())
+        ax3.set_yticks(self.ticks.degrees_ticks(90))
 
-        ax2.set_xticklabels(self.generate_octaves()[1])
-        ax3.set_xticklabels(self.generate_octaves()[1])
+        ax2.set_xticklabels(self.ticks.octaves_labels())
+        ax3.set_xticklabels(self.ticks.octaves_labels())
 
         ax1.legend([signal.description])
         ax2.legend([signal.description])
@@ -199,57 +210,3 @@ class Grapher:
         graph = plt.gcf()
 
         return graph
-
-
-    def generate_ticks(self, samples_array, amount_of_ticks = 20):
-        """
-        Generates a list of N ticks that are simetrically distributed along samples_array and can be used in matplotlib.pyplot.setp() method.
-
-        Args:
-        samples_array (list) Array like data from where the ticks will be extracted.
-        amount_of_ticks (int, optional) Amount of ticks which are going to be extracted from the input data. Default is 20.
-
-        Returns:
-            (list) List of generated ticks.
-        """
-
-        samples_array = to_list(samples_array)
-        ticks = []
-
-        if samples_array != []:
-            if len(samples_array) % 2 != 0:
-                del samples_array[-1] # Set samples_array to even lenght
-
-            while len(samples_array) % amount_of_ticks != 0:
-                amount_of_ticks = amount_of_ticks - 1 # Set amount_of_ticks to greatest common divisor
-
-            ticks = [None] * amount_of_ticks
-            K = int(len(samples_array) / amount_of_ticks)
-
-            for i in range(1, amount_of_ticks + 1, 1):
-                ticks[i - 1] = samples_array[K * i - 1]
-
-        return ticks
-
-
-    def generate_octaves(self):
-        """
-        Generates lists of ticks and tick labels that can both be used in matplotlib.pyplot.setp() method. The ticks are set to octaves, and defined according to UNE-EN 61260.
-
-        Returns:
-        ticks_list (list)
-        tick_labels (list)
-        """
-
-        ticks_list = []
-        tick_labels = []
-
-        for i in range(0, 10, 1):
-            ticks_list.append(31.25 * (2 ** i))
-
-            if 31.25 * (2 ** i) < 1000:
-                tick_labels.append(str(int(31.25 * (2 ** i))))
-            else:
-                tick_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
-
-        return ticks_list, tick_labels

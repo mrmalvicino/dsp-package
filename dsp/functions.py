@@ -388,13 +388,3 @@ def pretty_frequency(frequency):
     pretty_frequency = pretty_frequency.replace(".0", "")
 
     return pretty_frequency
-
-
-def generate_sinewave_ticks(frequency):
-    ticks_array = np.linspace(0, 1 / frequency, 5)
-
-    return ticks_array
-
-def generate_phase_deg_ticks(interval = 30):
-    phase_deg_ticks = np.arange(-180, 180 + interval, interval)
-    return phase_deg_ticks
