@@ -7,7 +7,16 @@ from dsp.functions import closest_to_average, pretty_frequency
 class Generator:
 
     def __init__(self):
+        self._sampling_rate = 320000
         self._ticks = Ticks()
+
+    @property
+    def sampling_rate(self):
+        return self._sampling_rate
+
+    @sampling_rate.setter
+    def sampling_rate(self, sampling_rate):
+        self._sampling_rate = sampling_rate
 
     @property
     def ticks(self):
@@ -103,13 +112,12 @@ class Generator:
         return samples_array
 
 
-    def arange_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = False):
+    def arange_time_array(self, wave_frequency, is_closed_interval = False):
         """
         Generates an array of time samples that represent one period of a given wave.
 
         Args:
             wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-            sampling_rate (int, optional) The sampling rate in samples per second (default is 44100 samples per second).
             is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
         Returns:
@@ -117,20 +125,19 @@ class Generator:
         """
 
         wave_period = 1 / wave_frequency
-        step = 1 / sampling_rate
+        step = 1 / self.sampling_rate
         last_sample = int(is_closed_interval) * step
         time_array = np.arange(0, wave_period + last_sample, step)
 
         return time_array
 
 
-    def linspace_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = False):
+    def linspace_time_array(self, wave_frequency, is_closed_interval = False):
         """
         Generates an array of time samples that represent one period of a given wave.
 
         Args:
             wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-            sampling_rate (int, optional) The sampling rate in samples per second (default is 44100 samples per second).
             is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
         Returns:
@@ -138,7 +145,7 @@ class Generator:
         """
 
         wave_period = 1 / wave_frequency
-        time_array = np.linspace(0, wave_period, int(sampling_rate / wave_frequency), endpoint = is_closed_interval)
+        time_array = np.linspace(0, wave_period, int(self.sampling_rate / wave_frequency), endpoint = is_closed_interval)
 
         return time_array
 
@@ -284,14 +291,13 @@ class Generator:
         return fundamental_frequency
 
 
-    def extend_domain(self, signal, new_duration, sampling_rate = 320000):
+    def extend_domain(self, signal, new_duration):
         """
         Extends the signal's domain by extending the time array and generating a new x_amplitude_array.
 
         Args:
             signal (Signal): object that represents the signal that is going to be extended.
             new_duration (float): The desired duration in seconds for the extended domain.
-            sampling_rate (int): Samples per second
 
         Returns:
             None.
@@ -300,7 +306,7 @@ class Generator:
         if new_duration != 1 / signal.fundamental_frequency:
             current_duration = 1 / signal.fundamental_frequency
             difference = new_duration - current_duration
-            amount_of_samples = int(difference * sampling_rate)
+            amount_of_samples = int(difference * self.sampling_rate)
             new_time_array = self.arange_time_array(wave_frequency = 1 / new_duration)
             signal.time_array = np.append(signal.time_array, new_time_array[amount_of_samples:])
             signal.x_amplitude_array = np.append(signal.x_amplitude_array, signal.x_amplitude_array[0:amount_of_samples])
