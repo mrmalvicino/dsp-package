@@ -1,4 +1,6 @@
 import numpy as np
+from dsp.functions import to_list
+
 
 class Ticks:
 
@@ -14,6 +16,7 @@ class Ticks:
 
     def degrees_ticks(self, interval = 30):
         phase_deg_ticks = np.arange(-180, 180 + interval, interval)
+
         return phase_deg_ticks
 
 
@@ -36,6 +39,12 @@ class Ticks:
                 octave_labels.append(str(int((31.25 / 1000) * (2 ** i))) + 'k')
 
         return octave_labels
+
+
+    def zero_to_max_ticks(self, array, interval = 1):
+        zero_to_max_ticks = np.arange(0, np.max(array) + interval, interval)
+
+        return zero_to_max_ticks
 
 
     def discrete_ticks(self, samples_array, amount_of_ticks = 20):

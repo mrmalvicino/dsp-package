@@ -3,6 +3,72 @@ import numpy as np
 import datetime
 
 
+def info(variable_input):
+    """
+    Gives descriptive information about a given variable.
+
+    Args:
+        variable_input (Any type) Variable of which information is being asked for.
+
+    Returns:
+        None.
+    """
+
+    if type(variable_input) == int:
+        print(f'{variable_input} is an integer.')
+
+    elif type(variable_input) == float:
+        print(f'{variable_input} is a float.')
+
+    elif type(variable_input) == str:
+        print(f'"{variable_input}" is a string.')
+
+    elif type(variable_input) == list:
+        print(f'The input is a list which contains {len(variable_input)} elements.')
+
+    elif type(variable_input) == tuple:
+        print(f'The input is a tuple of {len(variable_input)} components.')
+
+    elif type(variable_input) == dict:
+        print(f'The input is a dictionary of {len(variable_input)} elements:')
+        print(variable_input.items())
+
+    elif type(variable_input) == np.ndarray:
+        N = str(variable_input.shape[0])
+
+        if len(variable_input.shape) == 1:
+            N = 'one dimention'
+        else:
+            for i in range(1, len(variable_input.shape), 1):
+                N = N + 'x' + str(variable_input.shape[i])
+
+        print(f'The input is a {N} array of {variable_input.size} elements.')
+
+    else:
+        print(f'There is no information available for {type(variable_input)}.')
+
+    return
+
+
+def pretty_frequency(frequency):
+    if frequency < 1000:
+        pretty_number = round_float(frequency, 2)
+        pretty_frequency = str(pretty_number) + "Hz"
+
+    elif frequency < 10000:
+        pretty_number = round_float(frequency / 1000, 2)
+        pretty_number = "{:.1f}".format(pretty_number)
+        pretty_frequency = str(pretty_number) + "kHz"
+
+    else:
+        pretty_number = round_float(frequency / 1000, 3)
+        pretty_frequency = str(pretty_number) + "kHz"
+
+    pretty_frequency = pretty_frequency.replace(".0", "")
+
+    return pretty_frequency
+
+
 def get_root_dir(param = 0, open_root_dir = False):
     """
     Traces a folder relative to where the script is being executed. Defines this folder as "root directory" and returns it absolute path.
@@ -129,25 +195,29 @@ def to_list(variable_input):
     return list_output
 
 
-def round_array(array_input, significant_digits = 3):
+def matrix_to_list(list_input:list):
     """
-    Rounds the floats of a given array to a certain number of significant figures. Contemplates that the decimal (. ,) and negative (-) symbols are not digits.
+    Transforms a matrix-like list into a regular one.
 
     Args:
-        array_input (numpy.ndarray of floats) Input that is going to be rounded.
-        significant_digits (int, optional) Significant figures or digits. The default is 3.
+        list_input (list) Input list to be converted.
 
     Returns:
-        (numpy.ndarray of floats) Array with rounded elements.
+        list_output (list) Output list converted.
     """
 
-    rounded_array = np.array([])
+    list_output = []
+    dim = np.array(list_input).shape
 
-    for each_element in array_input:
-        rounded_element = round_float(each_element)
-        rounded_array = np.append(rounded_array, rounded_element)
+    if len(dim) > 1:
+        for x in range(len(list_input)):
+            for y in range(len(list_input)):
+                list_output.append(list_input[x][y])
 
-    return rounded_array
+    else:
+        list_output = list_input
+
+    return list_output
 
 
 def round_float(number_input, significant_digits = 3):
@@ -184,6 +254,27 @@ def round_float(number_input, significant_digits = 3):
     return rounded_float
 
 
+def round_array(array_input, significant_digits = 3):
+    """
+    Rounds the floats of a given array to a certain number of significant figures. Contemplates that the decimal (. ,) and negative (-) symbols are not digits.
+
+    Args:
+        array_input (numpy.ndarray of floats) Input that is going to be rounded.
+        significant_digits (int, optional) Significant figures or digits. The default is 3.
+
+    Returns:
+        (numpy.ndarray of floats) Array with rounded elements.
+    """
+
+    rounded_array = np.array([])
+
+    for each_element in array_input:
+        rounded_element = round_float(each_element)
+        rounded_array = np.append(rounded_array, rounded_element)
+
+    return rounded_array
+
+
 def closest_to_average(numbers_list):
     """
     Returns the value from a given list which is closest to the average of all the values from it.
@@ -209,100 +300,6 @@ def closest_to_average(numbers_list):
                 closest = i
 
     return closest
-
-
-def info(variable_input):
-    """
-    Gives descriptive information about a given variable.
-
-    Args:
-        variable_input (Any type) Variable of which information is being asked for.
-
-    Returns:
-        None.
-    """
-
-    if type(variable_input) == int:
-        print(f'{variable_input} is an integer.')
-
-    elif type(variable_input) == float:
-        print(f'{variable_input} is a float.')
-
-    elif type(variable_input) == str:
-        print(f'"{variable_input}" is a string.')
-
-    elif type(variable_input) == list:
-        print(f'The input is a list which contains {len(variable_input)} elements.')
-
-    elif type(variable_input) == tuple:
-        print(f'The input is a tuple of {len(variable_input)} components.')
-
-    elif type(variable_input) == dict:
-        print(f'The input is a dictionary of {len(variable_input)} elements:')
-        print(variable_input.items())
-
-    elif type(variable_input) == np.ndarray:
-        N = str(variable_input.shape[0])
-
-        if len(variable_input.shape) == 1:
-            N = 'one dimention'
-        else:
-            for i in range(1, len(variable_input.shape), 1):
-                N = N + 'x' + str(variable_input.shape[i])
-
-        print(f'The input is a {N} array of {variable_input.size} elements.')
-
-    else:
-        print(f'There is no information available for {type(variable_input)}.')
-
-    return
-
-
-def matrix_to_list(list_input:list):
-    """
-    Transforms a matrix-like list into a regular one.
-
-    Args:
-        list_input (list) Input list to be converted.
-
-    Returns:
-        list_output (list) Output list converted.
-    """
-
-    list_output = []
-    dim = np.array(list_input).shape
-
-    if len(dim) > 1:
-        for x in range(len(list_input)):
-            for y in range(len(list_input)):
-                list_output.append(list_input[x][y])
-
-    else:
-        list_output = list_input
-
-    return list_output
-
-
-def load_signal(path):
-    """
-    Loads a signal from a NumPy binary file.
-
-    Args:
-        path (string) The file path to the NumPy binary file containing the signal data. The path should include the file name with the .npy extension.
-
-    Returns:
-        signal_frequency (ndarray) An array representing the signal's frequency values.
-        signal_amplitude (ndarray) An array representing the signal's amplitude values.
-        signal_phase (ndarray) An array representing the signal's phase values.
-    """
-
-    signal = np.load(path)
-
-    signal_frequency = signalA[0,:]
-    signal_amplitude = signalA[1,:]
-    signal_phase = signalA[2,:]
-
-    return signal_frequency, signal_amplitude, signal_phase
 
 
 def sinewaves_list(self, *frequencies, sampling_rate = 320000, is_closed_interval = True):
@@ -371,20 +368,128 @@ def plot_sinewaves_list(self, sinewaves_list, **plot_kwargs):
     return graph
 
 
-def pretty_frequency(frequency):
-    if frequency < 1000:
-        pretty_number = round_float(frequency, 2)
-        pretty_frequency = str(pretty_number) + "Hz"
+def plot_multiple_overlaids(x_data, y_data_list, y_legends_list, is_discrete = False, **kwargs):
+    """
+    Generates a single graph of multiple signals one over each other.
 
-    elif frequency < 10000:
-        pretty_number = round_float(frequency / 1000, 2)
-        pretty_number = "{:.1f}".format(pretty_number)
-        pretty_frequency = str(pretty_number) + "kHz"
+    Args:
+        x_data (numpy.ndarray) Horizontal axis data.
+        y_data_list (list of numpy arrays) Data of each signal per component.
+        y_legends_list (list of strings) Legend of each signal per component.
+        is_discrete (bool, optional) Determines plotting styles depending on the horizontal domain. Default is False.
+        **kwargs (unpacked dict) Arguments for the matplotlib.plot() function.
 
+    Returns:
+        (matplotlib figure) Graph.
+    """
+
+    if len(y_data_list) != len(y_legends_list):
+        raise ValueError('There are not as many signals as legends.')
+
+    plt.figure(figsize=(10,5))
+    plt.grid()
+
+    if is_discrete == True:
+        plt.xlabel("Samples [n]")
+        kwargs = self._discrete_kwargs
+        plt.xticks(self.generate_ticks(x_data, 21))
     else:
-        pretty_number = round_float(frequency / 1000, 3)
-        pretty_frequency = str(pretty_number) + "kHz"
+        plt.xlabel("Time [s]")
 
-    pretty_frequency = pretty_frequency.replace(".0", "")
+    plt.ylabel("Amplitude")
 
-    return pretty_frequency
+    for i in range(0, len(y_data_list), 1):
+        y_data = y_data_list[i]
+        plt.plot(x_data, y_data, **kwargs)
+
+    plt.legend(y_legends_list, loc = "upper right")
+    graph = plt.gcf()
+
+    return graph
+
+
+def plot_dual_axis(x, y, **kwargs):
+    """
+    Generates a plot using matplotlib.
+
+    Args:
+        x (numpy.ndarray) Data for the horizontal axis.
+        y (tuple of numpy.ndarray) Data for the vertical axes. A two dimentions tuple is expected, containing the data for the left and right vertical axes in each component respectively.
+        **kwargs (unpacked dict) Object orientated kwargs values for matplotlib.pyplot.plot() and matplotlib.pyplot.setp() methods. Bidimentional tuples are expected for the keys that involves the vertical axes. For example, the scale could be determined by defining the dictionary kwargs = {'xscale': 'linear', 'yscale': ('logit','log')} and using it into plot_dual_axis(x, y, **kwargs).
+
+    Returns:
+        (matplotlib figure) Graph.
+    """
+
+    # Store the **kwargs in a new dictionary:
+    user_inputs = kwargs
+
+    # Define possible **kwargs:
+    kwargs = {
+        'figsize': (10,5),
+        'title': 'Plot',
+        'xlabel': '',
+        'ylabel': ('',''),
+        'xscale': 'linear',
+        'yscale': ('linear','linear'),
+        'legend': ('',''),
+        'xticks': 'default',
+        'yticks': ('default','default'),
+        'xticklabels': 'default',
+        'yticklabels': ('default','default'),
+        'xlim': 'default',
+        'ylim': ('default','default')
+    }
+
+    # Overwrite the possible **kwargs with the actual inputs:
+    for key, value in user_inputs.items():
+        if key in kwargs:
+            kwargs[key] = value
+    
+    # Split the plt.setp kwargs into 2 dictionaries:
+    setpL = dict()
+    setpR = dict()
+
+    setpL_keys = ['yticks', 'yticklabels', 'ylim', 'xticks', 'xticklabels', 'xlim']
+    setpR_keys = ['yticks', 'yticklabels', 'ylim']
+
+    for key in setpL_keys:
+        if len(kwargs[key]) == 2:
+            if kwargs[key][0] != 'default':
+                setpL.update({key: kwargs[key][0]})
+        else:
+            if kwargs[key] != 'default':
+                setpL.update({key: kwargs[key]})
+
+    for key in setpR_keys:
+        if len(kwargs[key]) == 2:
+            if kwargs[key][1] != 'default':
+                setpR.update({key: kwargs[key][1]})
+
+    # Generate plot:
+    fig, (axisL) = plt.subplots(1,1, figsize=kwargs['figsize'])
+    axisR = axisL.twinx()
+    
+    axisL.plot(x, y[0], color='blue')
+    axisR.plot(x, y[1], color='red', linestyle='--')
+    
+    axisL.set_xlabel(kwargs['xlabel'])
+    axisL.set_ylabel(kwargs['ylabel'][0])
+    axisR.set_ylabel(kwargs['ylabel'][1])
+    
+    axisL.set_xscale(kwargs['xscale'])
+    axisL.set_yscale(kwargs['yscale'][0])
+    axisR.set_yscale(kwargs['yscale'][1])
+    
+    axisL.set_title(kwargs['title'])
+    axisL.legend([kwargs['legend'][0]], loc='lower left')
+    axisR.legend([kwargs['legend'][1]], loc='lower right')
+
+    plt.setp(axisL, **setpL)
+    plt.setp(axisR, **setpR)
+    
+    axisL.grid()
+    plt.tight_layout()
+    graph = plt.gcf()
+
+    return graph

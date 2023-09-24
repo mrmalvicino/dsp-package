@@ -1,27 +1,80 @@
 import numpy as np
 from dsp.signal import Signal
+from dsp.ticks import Ticks
 from dsp.functions import closest_to_average, pretty_frequency
 
 
 class Generator:
 
     def __init__(self):
-        pass
+        self._ticks = Ticks()
+
+    @property
+    def ticks(self):
+        return self._ticks
+
+    @ticks.setter
+    def ticks(self, ticks):
+        self._ticks = ticks
 
 
-    def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = None):
+    def unit_impulse(self, starting_sample = -10, ending_sample = 10, impulse_sample = 10, description = "N/A"):
         signal = Signal()
+
+        signal.fundamental_frequency = 1
+        signal.fundamental_amplitude = 1
+        signal.fundamental_phase = 0
+        signal.time_array = self.samples_array(starting_sample, ending_sample)
+        signal.x_amplitude_array = self.unit_impulse_amplitude(signal.time_array, starting_sample, ending_sample, impulse_sample)
+
+        if description == "N/A":
+            description = "Impulse"
+
+        signal.description = description
+
+        return signal
+
+
+    def sum_signals(self, * signals):
+        # falta programar la suma cuando la frecuencia es más del doble
+        # hay un bug en forma de onda cuanndo el defasaje es 180 grados para ondas de igual frecuencia
+        # ver cómo programar espectro para ondas de igual frecuencia
+        # ordenar arrays de espectro y setear fundamentales después del for
+
+        sum_signal = Signal()
+
+        T_0 = 1 / self.get_fundamental_frequency(* signals)
+
+        for i in range(0, len(signals), 1):
+            self.extend_domain(signals[i], T_0)
+
+        sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
+
+        for i in range(1, len(signals), 1):
+            sum_signal.x_amplitude_array += signals[i].x_amplitude_array
+            sum_signal.frequency_array = np.append(sum_signal.frequency_array, signals[i].frequency_array)
+            sum_signal.X_magnitude_array = np.append(sum_signal.X_magnitude_array, signals[i].X_magnitude_array)
+            sum_signal.X_phase_array = np.append(sum_signal.X_phase_array, signals[i].X_phase_array)
+
+        sum_signal.fundamental_frequency = self.get_fundamental_frequency(* signals)
+        sum_signal.description = "sum"
+
+        return sum_signal
+
+
+    def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = "N/A"):
+        signal = Signal() # Crea una nueva instancia de la clase Signal en una nueva dirección de memoria RAM cada vez que se llama al método generator.sinewave(), a diferencia de declarar un objeto signal como atributo que usa siempre la misma dirección
 
         signal.fundamental_frequency = fundamental_frequency
         signal.fundamental_amplitude = fundamental_amplitude
         signal.fundamental_phase = fundamental_phase
         signal.time_array = self.arange_time_array(signal.fundamental_frequency)
-        signal.frequency_array = np.array([fundamental_frequency])
         signal.x_amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
-        signal.X_amplitude_array = np.array([fundamental_amplitude])
-        signal.phase_array = np.array([fundamental_phase])
+        signal.frequency_array = np.array([fundamental_frequency])
+        signal.X_magnitude_array = np.array([fundamental_amplitude])
+        signal.X_phase_array = np.array([fundamental_phase])
 
-        if description == None:
+        if description == "N/A":
             description = f'sin{pretty_frequency(fundamental_frequency)}'
 
         signal.description = description
@@ -29,7 +82,7 @@ class Generator:
         return signal
 
 
-    def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = True):
+    def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = False):
         """
         Generates an array of samples to use as the domain of a discrete signal.
 
@@ -50,7 +103,7 @@ class Generator:
         return samples_array
 
 
-    def arange_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = True):
+    def arange_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = False):
         """
         Generates an array of time samples that represent one period of a given wave.
 
@@ -71,7 +124,7 @@ class Generator:
         return time_array
 
 
-    def linspace_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = True):
+    def linspace_time_array(self, wave_frequency, sampling_rate = 320000, is_closed_interval = False):
         """
         Generates an array of time samples that represent one period of a given wave.
 
@@ -220,3 +273,36 @@ class Generator:
         sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
         return sine_array
+
+    def get_fundamental_frequency(self, * signals):
+        fundamental_frequency = signals[0].fundamental_frequency
+
+        for i in range(1, len(signals), 1):
+            if signals[i].fundamental_frequency < fundamental_frequency:
+                fundamental_frequency = signals[i].fundamental_frequency
+
+        return fundamental_frequency
+
+
+    def extend_domain(self, signal, new_duration, sampling_rate = 320000):
+        """
+        Extends the signal's domain by extending the time array and generating a new x_amplitude_array.
+
+        Args:
+            signal (Signal): object that represents the signal that is going to be extended.
+            new_duration (float): The desired duration in seconds for the extended domain.
+            sampling_rate (int): Samples per second
+
+        Returns:
+            None.
+        """
+
+        if new_duration != 1 / signal.fundamental_frequency:
+            current_duration = 1 / signal.fundamental_frequency
+            difference = new_duration - current_duration
+            amount_of_samples = int(difference * sampling_rate)
+            new_time_array = self.arange_time_array(wave_frequency = 1 / new_duration)
+            signal.time_array = np.append(signal.time_array, new_time_array[amount_of_samples:])
+            signal.x_amplitude_array = np.append(signal.x_amplitude_array, signal.x_amplitude_array[0:amount_of_samples])
+
+        return
