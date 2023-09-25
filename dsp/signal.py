@@ -115,8 +115,8 @@ class Signal:
 
         signal = np.load(path)
 
-        self.frequency_array = signalA[0,:]
-        self.X_magnitude_array = signalA[1,:]
-        self.X_phase_array = signalA[2,:]
+        self.frequency_array = signal[0,:]
+        self.X_magnitude_array = signal[1,:]
+        self.X_phase_array = signal[2,:]
 
         return
