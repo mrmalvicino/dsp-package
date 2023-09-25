@@ -51,7 +51,7 @@ class Generator:
         T_0 = 1 / self.get_fundamental_frequency(* signals)
 
         for i in range(0, len(signals), 1):
-            self.extend_domain(signals[i], T_0)
+            self.extend_signal(signals[i], T_0)
 
         sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
 
@@ -108,40 +108,38 @@ class Generator:
         return samples_array
 
 
-    def arange_time_array(self, wave_frequency, is_closed_interval = False):
+    def arange_time_array(self, wave_frequency):
         """
         Generates an array of time samples that represent one period of a given wave.
 
         Args:
             wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
         Returns:
             time_array (numpy.ndarray) An array containing sampling time values.
         """
 
         wave_period = 1 / wave_frequency
-        step = 1 / self.sampling_rate
-        last_sample = int(is_closed_interval) * step
-        time_array = np.arange(0, wave_period + last_sample, step)
+        steps_lenght = 1 / self.sampling_rate
+        time_array = np.arange(0, wave_period, steps_lenght)
 
         return time_array
 
 
-    def linspace_time_array(self, wave_frequency, is_closed_interval = False):
+    def linspace_time_array(self, wave_frequency):
         """
         Generates an array of time samples that represent one period of a given wave.
 
         Args:
             wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
         Returns:
             time_array (numpy.ndarray) An array containing sampling time values.
         """
 
         wave_period = 1 / wave_frequency
-        time_array = np.linspace(0, wave_period, int(self.sampling_rate / wave_frequency), endpoint = is_closed_interval)
+        steps_amount = int(self.sampling_rate / wave_frequency)
+        time_array = np.linspace(0, wave_period, steps_amount, endpoint = True)
 
         return time_array
 
@@ -287,24 +285,27 @@ class Generator:
         return fundamental_frequency
 
 
-    def extend_domain(self, signal, new_duration):
+    def extend_signal(self, signal, new_duration):
         """
-        Extends the signal's domain by extending the time array and generating a new amplitude_array.
+        Increase the signal's domain by extending the time array and generating a new amplitude_array.
 
         Args:
             signal (Signal): object that represents the signal that is going to be extended.
-            new_duration (float): The desired duration in seconds for the extended domain.
+            new_duration (float): The desired duration in seconds for the new time domain.
 
         Returns:
             None.
         """
 
         if new_duration != 1 / signal.fundamental_frequency:
-            current_duration = 1 / signal.fundamental_frequency
-            difference = new_duration - current_duration
-            amount_of_samples = int(difference * self.sampling_rate)
-            new_time_array = self.linspace_time_array(wave_frequency = 1 / new_duration)
-            signal.time_array = np.append(signal.time_array, new_time_array[amount_of_samples:])
-            signal.amplitude_array = np.append(signal.amplitude_array, signal.amplitude_array[0:amount_of_samples])
+            samples_before = len(signal.time_array)
+            samples_after = int(new_duration * len(signal.time_array) / signal.time_array[-1])
+            samples_increment = samples_after - samples_before
 
-        return
+            for i in range(0, samples_increment, 1):
+                steps_lenght = signal.time_array[1]
+                time_increment = signal.time_array[-1] + steps_lenght
+                signal.time_array = np.append(signal.time_array, time_increment)
+                signal.amplitude_array = np.append(signal.amplitude_array, signal.amplitude_array[i+1])
+
+        return signal

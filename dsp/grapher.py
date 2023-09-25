@@ -100,28 +100,6 @@ class Grapher:
         return graph
 
 
-    def plot_waveforms(self, * signals):
-        legends_list = []
-        frequencies_list = []
-
-        plt.figure(figsize = (6,2))
-        plt.grid()
-
-        for i in range(0, len(signals), 1):
-            x_data = signals[i].time_array
-            y_data = signals[i].amplitude_array
-            plt.plot(x_data, y_data, ** self.continuous_kwargs)
-            legends_list.append(signals[i].description)
-            frequencies_list.append(signals[i].fundamental_frequency)
-
-        min_freq = min(frequencies_list)
-        plt.xticks(self.ticks.sinewave_ticks(min_freq))
-        plt.legend(legends_list, loc = "upper right")
-        graph = plt.gcf()
-
-        return graph
-
-
     def plot_spectrum(self, signal):
         x_data = signal.frequency_array
         y_left_data = signal.X_magnitude_array
@@ -153,6 +131,28 @@ class Grapher:
         
         left_axis.grid()
         plt.tight_layout()
+        graph = plt.gcf()
+
+        return graph
+
+
+    def plot_waveforms(self, * signals):
+        legends_list = []
+        frequencies_list = []
+
+        plt.figure(figsize = (6,2))
+        plt.grid()
+
+        for i in range(0, len(signals), 1):
+            x_data = signals[i].time_array
+            y_data = signals[i].amplitude_array
+            plt.plot(x_data, y_data,marker='o', ** self.continuous_kwargs) #sacar marker
+            legends_list.append(signals[i].description)
+            frequencies_list.append(signals[i].fundamental_frequency)
+
+        min_freq = min(frequencies_list)
+        plt.xticks(self.ticks.sinewave_ticks(min_freq))
+        plt.legend(legends_list, loc = "upper right")
         graph = plt.gcf()
 
         return graph
