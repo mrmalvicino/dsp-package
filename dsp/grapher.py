@@ -146,12 +146,13 @@ class Grapher:
         for i in range(0, len(signals), 1):
             x_data = signals[i].time_array
             y_data = signals[i].amplitude_array
-            plt.plot(x_data, y_data,marker='o', ** self.continuous_kwargs) #sacar marker
+            plt.plot(x_data, y_data, ** self.continuous_kwargs)
             legends_list.append(signals[i].description)
             frequencies_list.append(signals[i].fundamental_frequency)
 
         min_freq = min(frequencies_list)
         plt.xticks(self.ticks.sinewave_ticks(min_freq))
+        plt.xlim(min(self.ticks.sinewave_ticks(min_freq)), max(self.ticks.sinewave_ticks(min_freq)))
         plt.legend(legends_list, loc = "upper right")
         graph = plt.gcf()
 

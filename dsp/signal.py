@@ -120,3 +120,27 @@ class Signal:
         self.X_phase_array = signal[2,:]
 
         return
+
+    def extend(self, new_duration):
+        """
+        Increase the signal's domain by extending the time array and generating a new amplitude_array.
+
+        Args:
+            new_duration (float): The desired duration in seconds for the new time domain.
+
+        Returns:
+            None.
+        """
+
+        if new_duration != 1 / self.fundamental_frequency:
+            samples_before = len(self.time_array)
+            samples_after = int(new_duration * len(self.time_array) / self.time_array[-1])
+            samples_increment = samples_after - samples_before
+
+            for i in range(0, samples_increment, 1):
+                steps_lenght = self.time_array[1]
+                time_increment = self.time_array[-1] + steps_lenght
+                self.time_array = np.append(self.time_array, time_increment)
+                self.amplitude_array = np.append(self.amplitude_array, self.amplitude_array[i+1])
+
+        return

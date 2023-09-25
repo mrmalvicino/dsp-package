@@ -170,3 +170,22 @@ def closest_to_average(numbers_list):
                 closest = i
 
     return closest
+
+
+def get_fundamental_frequency(self, * signals):
+    fundamental_frequency = signals[0].fundamental_frequency
+
+    for i in range(1, len(signals), 1):
+        if signals[i].fundamental_frequency < fundamental_frequency:
+            fundamental_frequency = signals[i].fundamental_frequency
+
+    return fundamental_frequency
+
+
+def extend_signals(* signals):
+    max_period = 1 / get_fundamental_frequency(* signals)
+
+    for i in range(0, len(signals), 1):
+        signals[i].extend(max_period)
+
+    return

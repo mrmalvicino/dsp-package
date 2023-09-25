@@ -1,7 +1,7 @@
 import numpy as np
 from dsp.signal import Signal
 from dsp.ticks import Ticks
-from dsp.functions import pretty_frequency
+from dsp.functions import pretty_frequency, get_fundamental_frequency, extend_signals
 
 
 class Generator:
@@ -47,12 +47,7 @@ class Generator:
 
     def sum_signals(self, * signals):
         sum_signal = Signal()
-
-        T_0 = 1 / self.get_fundamental_frequency(* signals)
-
-        for i in range(0, len(signals), 1):
-            self.extend_signal(signals[i], T_0)
-
+        extend_signals(* signals)
         sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
 
         for i in range(1, len(signals), 1):
@@ -61,7 +56,7 @@ class Generator:
             sum_signal.X_magnitude_array = np.append(sum_signal.X_magnitude_array, signals[i].X_magnitude_array)
             sum_signal.X_phase_array = np.append(sum_signal.X_phase_array, signals[i].X_phase_array)
 
-        sum_signal.fundamental_frequency = self.get_fundamental_frequency(* signals)
+        sum_signal.fundamental_frequency = get_fundamental_frequency(* signals)
         sum_signal.description = "sum"
 
         return sum_signal
@@ -274,38 +269,3 @@ class Generator:
         sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
         return sine_array
-
-    def get_fundamental_frequency(self, * signals):
-        fundamental_frequency = signals[0].fundamental_frequency
-
-        for i in range(1, len(signals), 1):
-            if signals[i].fundamental_frequency < fundamental_frequency:
-                fundamental_frequency = signals[i].fundamental_frequency
-
-        return fundamental_frequency
-
-
-    def extend_signal(self, signal, new_duration):
-        """
-        Increase the signal's domain by extending the time array and generating a new amplitude_array.
-
-        Args:
-            signal (Signal): object that represents the signal that is going to be extended.
-            new_duration (float): The desired duration in seconds for the new time domain.
-
-        Returns:
-            None.
-        """
-
-        if new_duration != 1 / signal.fundamental_frequency:
-            samples_before = len(signal.time_array)
-            samples_after = int(new_duration * len(signal.time_array) / signal.time_array[-1])
-            samples_increment = samples_after - samples_before
-
-            for i in range(0, samples_increment, 1):
-                steps_lenght = signal.time_array[1]
-                time_increment = signal.time_array[-1] + steps_lenght
-                signal.time_array = np.append(signal.time_array, time_increment)
-                signal.amplitude_array = np.append(signal.amplitude_array, signal.amplitude_array[i+1])
-
-        return signal
