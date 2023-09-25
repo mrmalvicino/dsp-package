@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from dsp.signal import Signal
 from dsp.ticks import Ticks
-from dsp.functions import closest_to_average
 
 
 class Grapher:

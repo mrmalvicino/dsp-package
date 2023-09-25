@@ -1,7 +1,7 @@
 import numpy as np
 from dsp.signal import Signal
 from dsp.ticks import Ticks
-from dsp.functions import closest_to_average, pretty_frequency
+from dsp.functions import pretty_frequency
 
 
 class Generator:
