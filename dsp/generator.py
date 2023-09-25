@@ -10,6 +10,7 @@ class Generator:
         self._sampling_rate = 320000
         self._ticks = Ticks()
 
+
     @property
     def sampling_rate(self):
         return self._sampling_rate

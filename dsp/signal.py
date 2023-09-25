@@ -14,6 +14,7 @@ class Signal:
         self._X_phase_array = np.array([])
         self._description = "N/A"
 
+
     @property
     def fundamental_frequency(self):
         return self._fundamental_frequency

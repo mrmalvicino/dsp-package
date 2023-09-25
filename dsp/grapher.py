@@ -20,6 +20,7 @@ class Grapher:
 
         self._discrete_kwargs = discrete_kwargs
 
+
     @property
     def signal(self):
         return self._signal
@@ -99,6 +100,7 @@ class Grapher:
 
         return graph
 
+
     def plot_waveforms(self, * signals):
         legends_list = []
         frequencies_list = []
@@ -116,6 +118,93 @@ class Grapher:
         min_freq = min(frequencies_list)
         plt.xticks(self.ticks.sinewave_ticks(min_freq))
         plt.legend(legends_list, loc = "upper right")
+        graph = plt.gcf()
+
+        return graph
+
+
+    def plot_spectrum(self, x, y, **kwargs):
+        """
+        Generates a plot using matplotlib.
+
+        Args:
+            x (numpy.ndarray) Data for the horizontal axis.
+            y (tuple of numpy.ndarray) Data for the vertical axes. A two dimentions tuple is expected, containing the data for the left and right vertical axes in each component respectively.
+            **kwargs (unpacked dict) Object orientated kwargs values for matplotlib.pyplot.plot() and matplotlib.pyplot.setp() methods. Bidimentional tuples are expected for the keys that involves the vertical axes. For example, the scale could be determined by defining the dictionary kwargs = {'xscale': 'linear', 'yscale': ('logit','log')} and using it into plot_dual_axis(x, y, **kwargs).
+
+        Returns:
+            (matplotlib figure) Graph.
+        """
+
+        # Store the **kwargs in a new dictionary:
+        user_inputs = kwargs
+
+        # Define possible **kwargs:
+        kwargs = {
+            'figsize': (10,5),
+            'title': 'Plot',
+            'xlabel': '',
+            'ylabel': ('',''),
+            'xscale': 'linear',
+            'yscale': ('linear','linear'),
+            'legend': ('',''),
+            'xticks': 'default',
+            'yticks': ('default','default'),
+            'xticklabels': 'default',
+            'yticklabels': ('default','default'),
+            'xlim': 'default',
+            'ylim': ('default','default')
+        }
+
+        # Overwrite the possible **kwargs with the actual inputs:
+        for key, value in user_inputs.items():
+            if key in kwargs:
+                kwargs[key] = value
+        
+        # Split the plt.setp kwargs into 2 dictionaries:
+        setpL = dict()
+        setpR = dict()
+
+        setpL_keys = ['yticks', 'yticklabels', 'ylim', 'xticks', 'xticklabels', 'xlim']
+        setpR_keys = ['yticks', 'yticklabels', 'ylim']
+
+        for key in setpL_keys:
+            if len(kwargs[key]) == 2:
+                if kwargs[key][0] != 'default':
+                    setpL.update({key: kwargs[key][0]})
+            else:
+                if kwargs[key] != 'default':
+                    setpL.update({key: kwargs[key]})
+
+        for key in setpR_keys:
+            if len(kwargs[key]) == 2:
+                if kwargs[key][1] != 'default':
+                    setpR.update({key: kwargs[key][1]})
+
+        # Generate plot:
+        fig, (axisL) = plt.subplots(1,1, figsize=kwargs['figsize'])
+        axisR = axisL.twinx()
+        
+        axisL.plot(x, y[0], color='blue')
+        axisR.plot(x, y[1], color='red', linestyle='--')
+        
+        axisL.set_xlabel(kwargs['xlabel'])
+        axisL.set_ylabel(kwargs['ylabel'][0])
+        axisR.set_ylabel(kwargs['ylabel'][1])
+        
+        axisL.set_xscale(kwargs['xscale'])
+        axisL.set_yscale(kwargs['yscale'][0])
+        axisR.set_yscale(kwargs['yscale'][1])
+        
+        axisL.set_title(kwargs['title'])
+        axisL.legend([kwargs['legend'][0]], loc='lower left')
+        axisR.legend([kwargs['legend'][1]], loc='lower right')
+
+        plt.setp(axisL, **setpL)
+        plt.setp(axisR, **setpR)
+        
+        axisL.grid()
+        plt.tight_layout()
         graph = plt.gcf()
 
         return graph
