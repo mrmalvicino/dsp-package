@@ -73,7 +73,7 @@ class Generator:
         signal.fundamental_frequency = fundamental_frequency
         signal.fundamental_amplitude = fundamental_amplitude
         signal.fundamental_phase = fundamental_phase
-        signal.time_array = self.arange_time_array(signal.fundamental_frequency)
+        signal.time_array = self.linspace_time_array(signal.fundamental_frequency)
         signal.amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
         signal.frequency_array = np.array([fundamental_frequency])
         signal.X_magnitude_array = np.array([fundamental_amplitude])
@@ -303,7 +303,7 @@ class Generator:
             current_duration = 1 / signal.fundamental_frequency
             difference = new_duration - current_duration
             amount_of_samples = int(difference * self.sampling_rate)
-            new_time_array = self.arange_time_array(wave_frequency = 1 / new_duration)
+            new_time_array = self.linspace_time_array(wave_frequency = 1 / new_duration)
             signal.time_array = np.append(signal.time_array, new_time_array[amount_of_samples:])
             signal.amplitude_array = np.append(signal.amplitude_array, signal.amplitude_array[0:amount_of_samples])
 
