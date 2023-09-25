@@ -34,7 +34,7 @@ class Generator:
         signal.fundamental_amplitude = 1
         signal.fundamental_phase = 0
         signal.time_array = self.samples_array(starting_sample, ending_sample)
-        signal.x_amplitude_array = self.unit_impulse_amplitude(signal.time_array, starting_sample, ending_sample, impulse_sample)
+        signal.amplitude_array = self.unit_impulse_amplitude(signal.time_array, starting_sample, ending_sample, impulse_sample)
 
         if description == "N/A":
             description = "Impulse"
@@ -45,11 +45,6 @@ class Generator:
 
 
     def sum_signals(self, * signals):
-        # falta programar la suma cuando la frecuencia es más del doble
-        # hay un bug en forma de onda cuanndo el defasaje es 180 grados para ondas de igual frecuencia
-        # ver cómo programar espectro para ondas de igual frecuencia
-        # ordenar arrays de espectro y setear fundamentales después del for
-
         sum_signal = Signal()
 
         T_0 = 1 / self.get_fundamental_frequency(* signals)
@@ -60,7 +55,7 @@ class Generator:
         sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
 
         for i in range(1, len(signals), 1):
-            sum_signal.x_amplitude_array += signals[i].x_amplitude_array
+            sum_signal.amplitude_array += signals[i].amplitude_array
             sum_signal.frequency_array = np.append(sum_signal.frequency_array, signals[i].frequency_array)
             sum_signal.X_magnitude_array = np.append(sum_signal.X_magnitude_array, signals[i].X_magnitude_array)
             sum_signal.X_phase_array = np.append(sum_signal.X_phase_array, signals[i].X_phase_array)
@@ -78,7 +73,7 @@ class Generator:
         signal.fundamental_amplitude = fundamental_amplitude
         signal.fundamental_phase = fundamental_phase
         signal.time_array = self.arange_time_array(signal.fundamental_frequency)
-        signal.x_amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
+        signal.amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
         signal.frequency_array = np.array([fundamental_frequency])
         signal.X_magnitude_array = np.array([fundamental_amplitude])
         signal.X_phase_array = np.array([fundamental_phase])
@@ -293,7 +288,7 @@ class Generator:
 
     def extend_domain(self, signal, new_duration):
         """
-        Extends the signal's domain by extending the time array and generating a new x_amplitude_array.
+        Extends the signal's domain by extending the time array and generating a new amplitude_array.
 
         Args:
             signal (Signal): object that represents the signal that is going to be extended.
@@ -309,6 +304,6 @@ class Generator:
             amount_of_samples = int(difference * self.sampling_rate)
             new_time_array = self.arange_time_array(wave_frequency = 1 / new_duration)
             signal.time_array = np.append(signal.time_array, new_time_array[amount_of_samples:])
-            signal.x_amplitude_array = np.append(signal.x_amplitude_array, signal.x_amplitude_array[0:amount_of_samples])
+            signal.amplitude_array = np.append(signal.amplitude_array, signal.amplitude_array[0:amount_of_samples])
 
         return

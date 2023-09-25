@@ -8,7 +8,7 @@ class Signal:
         self._fundamental_amplitude = -1
         self._fundamental_phase = -1
         self._time_array = np.array([])
-        self._x_amplitude_array = np.array([])
+        self._amplitude_array = np.array([])
         self._frequency_array = np.array([])
         self._X_magnitude_array = np.array([])
         self._X_phase_array = np.array([])
@@ -47,12 +47,12 @@ class Signal:
         self._time_array = time_array
 
     @property
-    def x_amplitude_array(self):
-        return self._x_amplitude_array
+    def amplitude_array(self):
+        return self._amplitude_array
 
-    @x_amplitude_array.setter
-    def x_amplitude_array(self, x_amplitude_array):
-        self._x_amplitude_array = x_amplitude_array
+    @amplitude_array.setter
+    def amplitude_array(self, amplitude_array):
+        self._amplitude_array = amplitude_array
 
     @property
     def frequency_array(self):
@@ -92,7 +92,7 @@ class Signal:
         self.fundamental_amplitude = origin.fundamental_amplitude
         self.fundamental_phase = origin.fundamental_phase
         self.time_array = origin.time_array
-        self.x_amplitude_array = origin.x_amplitude_array
+        self.amplitude_array = origin.amplitude_array
         self.frequency_array = origin.frequency_array
         self.X_magnitude_array = origin.X_magnitude_array
         self.X_phase_array = origin.X_phase_array

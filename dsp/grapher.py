@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from dsp.signal import Signal
 from dsp.ticks import Ticks
+from dsp.functions import closest_to_average
 
 
 class Grapher:
@@ -55,7 +56,7 @@ class Grapher:
     def plot_signal(self, signal):
         fig, (ax1, ax2, ax3) = plt.subplots(nrows = 3, ncols = 1, figsize = (6, 6))
 
-        ax1.plot(signal.time_array, signal.x_amplitude_array, ** self.continuous_kwargs)
+        ax1.plot(signal.time_array, signal.amplitude_array, ** self.continuous_kwargs)
         ax2.plot(signal.frequency_array, signal.X_magnitude_array, ** self.discrete_kwargs)
         ax3.plot(signal.frequency_array, signal.X_phase_array, ** self.discrete_kwargs)
 
@@ -94,6 +95,27 @@ class Grapher:
         ax3.legend([signal.description])
 
         plt.tight_layout()
+        graph = plt.gcf()
+
+        return graph
+
+    def plot_waveforms(self, * signals):
+        legends_list = []
+        frequencies_list = []
+
+        plt.figure(figsize = (6,2))
+        plt.grid()
+
+        for i in range(0, len(signals), 1):
+            x_data = signals[i].time_array
+            y_data = signals[i].amplitude_array
+            plt.plot(x_data, y_data, ** self.continuous_kwargs)
+            legends_list.append(signals[i].description)
+            frequencies_list.append(signals[i].fundamental_frequency)
+
+        min_freq = min(frequencies_list)
+        plt.xticks(self.ticks.sinewave_ticks(min_freq))
+        plt.legend(legends_list, loc = "upper right")
         graph = plt.gcf()
 
         return graph
