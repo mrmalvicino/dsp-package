@@ -121,6 +121,7 @@ class Signal:
 
         return
 
+
     def extend(self, new_duration):
         """
         Increase the signal's domain by extending the time array and generating a new amplitude_array.

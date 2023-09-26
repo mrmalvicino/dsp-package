@@ -128,7 +128,7 @@ class Grapher:
 
         plt.setp(left_axis, ** left_setup)
         plt.setp(right_axis, ** right_setup)
-        
+
         left_axis.grid()
         plt.tight_layout()
         graph = plt.gcf()

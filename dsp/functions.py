@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 
 def info(variable_input):
@@ -172,7 +173,7 @@ def closest_to_average(numbers_list):
     return closest
 
 
-def get_fundamental_frequency(self, * signals):
+def get_lower_frequency(self, * signals):
     fundamental_frequency = signals[0].fundamental_frequency
 
     for i in range(1, len(signals), 1):
@@ -182,10 +183,73 @@ def get_fundamental_frequency(self, * signals):
     return fundamental_frequency
 
 
-def extend_signals(* signals):
-    max_period = 1 / get_fundamental_frequency(* signals)
+def extend_to_min(* signals):
+    max_period = 1 / get_lower_frequency(* signals)
 
     for i in range(0, len(signals), 1):
         signals[i].extend(max_period)
 
     return
+
+
+def get_sum_period(* signals):
+    frequencies_list = []
+
+    for i in range(0, len(signals), 1):
+        frequencies_list.append(signals[i].fundamental_frequency)
+
+    gcd_result = math.gcd(* tuple(frequencies_list))
+    T_0 = 1 / gcd_result
+
+    return T_0
+
+
+def extend_to_sum(* signals):
+    sum_period = get_sum_period(* signals) * 4 # Probando signal.extend(), sacar * 4 al terminar
+
+    for i in range(0, len(signals), 1):
+        signals[i].extend(sum_period)
+
+    return
+
+
+def buble_decreasing_sort(master_arr, slave_arr_1, slave_arr_2):
+    size = len(master_arr)
+
+    for i in range(0, size, 1):
+        for j in range(0, size - 1, 1):
+            if master_arr[j] < master_arr[j+1]:
+                aux = master_arr[j+1]
+                master_arr[j+1] = master_arr[j]
+                master_arr[j] = aux
+
+                aux = slave_arr_1[j+1]
+                slave_arr_1[j+1] = slave_arr_1[j]
+                slave_arr_1[j] = aux
+
+                aux = slave_arr_2[j+1]
+                slave_arr_2[j+1] = slave_arr_2[j]
+                slave_arr_2[j] = aux
+
+    return master_arr, slave_arr_1, slave_arr_2
+
+
+def buble_increasing_sort(master_arr, slave_arr_1, slave_arr_2):
+    size = len(master_arr)
+
+    for i in range(0, size, 1):
+        for j in range(0, size - 1, 1):
+            if master_arr[j+1] < master_arr[j]:
+                aux = master_arr[j+1]
+                master_arr[j+1] = master_arr[j]
+                master_arr[j] = aux
+
+                aux = slave_arr_1[j+1]
+                slave_arr_1[j+1] = slave_arr_1[j]
+                slave_arr_1[j] = aux
+
+                aux = slave_arr_2[j+1]
+                slave_arr_2[j+1] = slave_arr_2[j]
+                slave_arr_2[j] = aux
+
+    return master_arr, slave_arr_1, slave_arr_2

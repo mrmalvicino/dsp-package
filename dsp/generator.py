@@ -1,13 +1,13 @@
 import numpy as np
 from dsp.signal import Signal
 from dsp.ticks import Ticks
-from dsp.functions import pretty_frequency, get_fundamental_frequency, extend_signals
+from dsp.functions import pretty_frequency, buble_increasing_sort, get_sum_period, extend_to_sum
 
 
 class Generator:
 
     def __init__(self):
-        self._sampling_rate = 320000
+        self._sampling_rate = 48000
         self._ticks = Ticks()
 
 
@@ -28,26 +28,9 @@ class Generator:
         self._ticks = ticks
 
 
-    def unit_impulse(self, starting_sample = -10, ending_sample = 10, impulse_sample = 10, description = "N/A"):
-        signal = Signal()
-
-        signal.fundamental_frequency = 1
-        signal.fundamental_amplitude = 1
-        signal.fundamental_phase = 0
-        signal.time_array = self.samples_array(starting_sample, ending_sample)
-        signal.amplitude_array = self.unit_impulse_amplitude(signal.time_array, starting_sample, ending_sample, impulse_sample)
-
-        if description == "N/A":
-            description = "Impulse"
-
-        signal.description = description
-
-        return signal
-
-
     def sum_signals(self, * signals):
         sum_signal = Signal()
-        extend_signals(* signals)
+        extend_to_sum(* signals)
         sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
 
         for i in range(1, len(signals), 1):
@@ -56,7 +39,19 @@ class Generator:
             sum_signal.X_magnitude_array = np.append(sum_signal.X_magnitude_array, signals[i].X_magnitude_array)
             sum_signal.X_phase_array = np.append(sum_signal.X_phase_array, signals[i].X_phase_array)
 
-        sum_signal.fundamental_frequency = get_fundamental_frequency(* signals)
+        master = sum_signal.frequency_array
+        slave_1 = sum_signal.X_magnitude_array
+        slave_2 = sum_signal.X_phase_array
+        sorted_arrays = buble_increasing_sort(master, slave_1, slave_2)
+
+        sum_signal.frequency_array = sorted_arrays[0]
+        sum_signal.X_magnitude_array = sorted_arrays[1]
+        sum_signal.X_phase_array = sorted_arrays[2]
+
+        T_0 = get_sum_period(* signals)
+        print(f'Período: {T_0}') # Probando signal.extend(), eliminar linea al terminar
+        T_0 = 4 * T_0 # Probando signal.extend(), eliminar linea al terminar
+        sum_signal.fundamental_frequency = 1 / T_0
         sum_signal.description = "sum"
 
         return sum_signal
@@ -76,6 +71,23 @@ class Generator:
 
         if description == "N/A":
             description = f'sin{pretty_frequency(fundamental_frequency)}'
+
+        signal.description = description
+
+        return signal
+
+
+    def unit_impulse(self, starting_sample = -10, ending_sample = 10, impulse_sample = 10, description = "N/A"):
+        signal = Signal()
+
+        signal.fundamental_frequency = 1
+        signal.fundamental_amplitude = 1
+        signal.fundamental_phase = 0
+        signal.time_array = self.samples_array(starting_sample, ending_sample)
+        signal.amplitude_array = self.unit_impulse_amplitude(signal.time_array, starting_sample, ending_sample, impulse_sample)
+
+        if description == "N/A":
+            description = "Impulse"
 
         signal.description = description
 
