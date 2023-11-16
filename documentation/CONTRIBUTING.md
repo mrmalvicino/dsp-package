@@ -17,3 +17,5 @@
 - Setters and getters have to me made using decorations to access objects attributes.
 
 - Files and folders must be named using `snake_case` nomenclature.
+
+&nbsp; Any cases not specified in this document should follow the [PEP Style Guide for Python Code](https://peps.python.org/pep-0008/).

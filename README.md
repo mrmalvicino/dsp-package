@@ -2,9 +2,15 @@
 
 &nbsp; The [DSP package](https://github.com/mrmalvicino/dsp) provides a set of tools for digital signal processing in Python. It is designed to facilitate the generation, manipulation, and visualization of signals, as well as the application of filters and signals processing.
 
-## Features and core modules
+## Features
 
 &nbsp; This package pretends to simplify signal processing by alowing the user to manipulate signals as objects.
+
+&nbsp; One of the main advantages of representing signals as objects is the clarity and simplicity of code expression. Encapsulating the signal logic in an object makes the code easier to understand because the object's methods and attributes directly reflect the properties and operations associated with the signal, eliminating the need to manage time and amplitude arrays separately.
+
+&nbsp; Additionally, this methodology promotes code reuse. By defining signals as objects, generic classes can be created that cover a variety of common signals, allowing users to simply instantiate and adjust parameters to their specific needs. This reduces redundancy in the code and encourages modular and clean programming.
+
+&nbsp; Another key advantage lies in the abstraction of complexity. By treating signals as objects, the internal details of their implementation can be hidden from the user, who can focus on using more intuitive methods and attributes without worrying about technical details. This simplifies the workflow and facilitates collaboration, as different users can interact with the signals consistently.
 
 ### Signal Module
 
