@@ -15,6 +15,11 @@ class Signal:
         self._description = "N/A"
 
 
+#######################
+## GETTERS & SETTERS ##
+#######################
+
+
     @property
     def fundamental_frequency(self):
         return self._fundamental_frequency
@@ -88,15 +93,20 @@ class Signal:
         self._description = description
 
 
+#############
+## METHODS ##
+#############
+
+
     def copy_from(self, origin):
         self.fundamental_frequency = origin.fundamental_frequency
         self.fundamental_amplitude = origin.fundamental_amplitude
         self.fundamental_phase = origin.fundamental_phase
-        self.time_array = origin.time_array
-        self.amplitude_array = origin.amplitude_array
-        self.frequency_array = origin.frequency_array
-        self.X_magnitude_array = origin.X_magnitude_array
-        self.X_phase_array = origin.X_phase_array
+        self.time_array = origin.time_array                             # Used for waveform: t
+        self.amplitude_array = origin.amplitude_array                   # Used for waveform: x(t)
+        self.frequency_array = origin.frequency_array                   # Used for spectrum: f
+        self.X_magnitude_array = origin.X_magnitude_array               # Used for spectrum: X(f)
+        self.X_phase_array = origin.X_phase_array                       # Used for spectrum: Q(f)
         self.description = origin.description
 
         return

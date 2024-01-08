@@ -11,6 +11,11 @@ class Generator:
         self._ticks = Ticks()
 
 
+#######################
+## GETTERS & SETTERS ##
+#######################
+
+
     @property
     def sampling_rate(self):
         return self._sampling_rate
@@ -26,6 +31,11 @@ class Generator:
     @ticks.setter
     def ticks(self, ticks):
         self._ticks = ticks
+
+
+################
+## OPERATIONS ##
+################
 
 
     def sum_signals(self, * signals):
@@ -55,6 +65,11 @@ class Generator:
         sum_signal.description = "sum"
 
         return sum_signal
+
+
+####################
+## SIGNAL OBJECTS ##
+####################
 
 
     def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = "N/A"):
@@ -94,61 +109,30 @@ class Generator:
         return signal
 
 
-    def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = False):
+######################
+## AMPLITUDE ARRAYS ##
+######################
+
+
+    def sinewave_amplitude(self, time_array, wave_frequency, wave_amplitude = 1, phase_deg = 0):
         """
-        Generates an array of samples to use as the domain of a discrete signal.
+        Generates the amplitude array for a sinewave.
 
         Args:
-            starting_sample (int, optional) Starting sample. The default is -10.
-            ending_sample (int, optional) Ending sample. The default is 10.
-            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
+            time_array (numpy.ndarray) Array of time values.
+            wave_frequency (float) Frequency of the sine wave (Hz).
+            phase_deg (float, optional) Phase angle in degrees. Default is 0 degrees.
+            wave_amplitude (float, optional) Amplitude of the sine wave. Default is 1.
 
         Returns:
-            (numpy.ndarray) Array with the samples.
+            (numpy.ndarray) Array containing the generated sine wave.
         """
+ 
+        omega = 2 * np.pi * wave_frequency
+        phase_rad = phase_deg * (np.pi / 180)
+        sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
-        if ending_sample <= starting_sample:
-            raise ValueError('The parameter starting_sample must be less than ending_sample by definition.')
-
-        samples_array = np.arange(starting_sample, ending_sample + int(is_closed_interval), 1)
-
-        return samples_array
-
-
-    def arange_time_array(self, wave_frequency):
-        """
-        Generates an array of time samples that represent one period of a given wave.
-
-        Args:
-            wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-
-        Returns:
-            time_array (numpy.ndarray) An array containing sampling time values.
-        """
-
-        wave_period = 1 / wave_frequency
-        steps_lenght = 1 / self.sampling_rate
-        time_array = np.arange(0, wave_period, steps_lenght)
-
-        return time_array
-
-
-    def linspace_time_array(self, wave_frequency):
-        """
-        Generates an array of time samples that represent one period of a given wave.
-
-        Args:
-            wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
-
-        Returns:
-            time_array (numpy.ndarray) An array containing sampling time values.
-        """
-
-        wave_period = 1 / wave_frequency
-        steps_amount = int(self.sampling_rate / wave_frequency)
-        time_array = np.linspace(0, wave_period, steps_amount, endpoint = True)
-
-        return time_array
+        return sine_array
 
 
     def unit_impulse_amplitude(self, samples_array, starting_sample = -10, ending_sample = 10, impulse_sample = 10):
@@ -262,22 +246,64 @@ class Generator:
 
         return signal
 
-    def sinewave_amplitude(self, time_array, wave_frequency, wave_amplitude = 1, phase_deg = 0):
+
+####################
+## SAMPLES ARRAYS ##
+####################
+
+
+    def arange_time_array(self, wave_frequency):
         """
-        Generates the amplitude array for a sinewave.
+        Generates an array of time samples that represent one period of a given wave.
 
         Args:
-            time_array (numpy.ndarray) Array of time values.
-            wave_frequency (float) Frequency of the sine wave (Hz).
-            phase_deg (float, optional) Phase angle in degrees. Default is 0 degrees.
-            wave_amplitude (float, optional) Amplitude of the sine wave. Default is 1.
+            wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
 
         Returns:
-            (numpy.ndarray) Array containing the generated sine wave.
+            time_array (numpy.ndarray) An array containing sampling time values.
         """
- 
-        omega = 2 * np.pi * wave_frequency
-        phase_rad = phase_deg * (np.pi / 180)
-        sine_array = wave_amplitude * np.sin(omega * time_array + phase_rad)
 
-        return sine_array
+        wave_period = 1 / wave_frequency
+        steps_lenght = 1 / self.sampling_rate
+        time_array = np.arange(0, wave_period, steps_lenght)
+
+        return time_array
+
+
+    def linspace_time_array(self, wave_frequency):
+        """
+        Generates an array of time samples that represent one period of a given wave.
+
+        Args:
+            wave_frequency (int, optional) The frequency of the waveform in hertz (default is 1k Hz).
+
+        Returns:
+            time_array (numpy.ndarray) An array containing sampling time values.
+        """
+
+        wave_period = 1 / wave_frequency
+        steps_amount = int(self.sampling_rate / wave_frequency)
+        time_array = np.linspace(0, wave_period, steps_amount, endpoint = True)
+
+        return time_array
+
+
+    def samples_array(self, starting_sample = -10, ending_sample = 10, is_closed_interval = False):
+        """
+        Generates an array of samples to use as the domain of a discrete signal.
+
+        Args:
+            starting_sample (int, optional) Starting sample. The default is -10.
+            ending_sample (int, optional) Ending sample. The default is 10.
+            is_closed_interval (bool, optional) Determines whether the bound of the samples interval belongs to it or not. The default is True.
+
+        Returns:
+            (numpy.ndarray) Array with the samples.
+        """
+
+        if ending_sample <= starting_sample:
+            raise ValueError('The parameter starting_sample must be less than ending_sample by definition.')
+
+        samples_array = np.arange(starting_sample, ending_sample + int(is_closed_interval), 1)
+
+        return samples_array

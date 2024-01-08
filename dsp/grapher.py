@@ -20,6 +20,11 @@ class Grapher:
         self._discrete_kwargs = discrete_kwargs
 
 
+#######################
+## GETTERS & SETTERS ##
+#######################
+
+
     @property
     def signal(self):
         return self._signal
@@ -51,6 +56,11 @@ class Grapher:
     @discrete_kwargs.setter
     def discrete_kwargs(self, discrete_kwargs):
         self._discrete_kwargs = discrete_kwargs
+
+
+#############
+## METHODS ##
+#############
 
 
     def plot_signal(self, signal):

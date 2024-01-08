@@ -11,6 +11,11 @@ class Archive:
         self._save_figure_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
 
 
+#######################
+## GETTERS & SETTERS ##
+#######################
+
+
     @property
     def resources_path(self):
         return self._resources_path
@@ -42,6 +47,11 @@ class Archive:
     @save_figure_kwargs.setter
     def save_figure_kwargs(self, save_figure_kwargs):
         self._save_figure_kwargs = save_figure_kwargs
+
+
+#############
+## METHODS ##
+#############
 
 
     def get_root_dir(self, is_ipynb = False):
