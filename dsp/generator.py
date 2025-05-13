@@ -38,9 +38,9 @@ class Generator:
 ################
 
 
-    def sum_signals(self, * signals):
+    def sum_signals(self, *signals):
         sum_signal = Signal()
-        extend_to_sum(* signals)
+        extend_to_sum(*signals)
         sum_signal.copy_from(signals[0]) # Asigna los atributos de signals[0] a sum_signal, pero alojándolo en una dirección de memoria RAM distinta a la de signals[0]. De haber igualado ambos objetos, se habrían asignado los punteros en una única dirección RAM.
 
         for i in range(1, len(signals), 1):
@@ -58,7 +58,7 @@ class Generator:
         sum_signal.X_magnitude_array = sorted_arrays[1]
         sum_signal.X_phase_array = sorted_arrays[2]
 
-        T_0 = get_sum_period(* signals)
+        T_0 = get_sum_period(*signals)
         print(f'Período: {T_0}') # Probando signal.extend(), eliminar linea al terminar
         T_0 = 4 * T_0 # Probando signal.extend(), eliminar linea al terminar
         sum_signal.fundamental_frequency = 1 / T_0

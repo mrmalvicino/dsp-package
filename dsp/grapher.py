@@ -66,9 +66,9 @@ class Grapher:
     def plot_signal(self, signal):
         fig, (ax1, ax2, ax3) = plt.subplots(nrows = 3, ncols = 1, figsize = (6, 6))
 
-        ax1.plot(signal.time_array, signal.amplitude_array, ** self.continuous_kwargs)
-        ax2.plot(signal.frequency_array, signal.X_magnitude_array, ** self.discrete_kwargs)
-        ax3.plot(signal.frequency_array, signal.X_phase_array, ** self.discrete_kwargs)
+        ax1.plot(signal.time_array, signal.amplitude_array, **self.continuous_kwargs)
+        ax2.plot(signal.frequency_array, signal.X_magnitude_array, **self.discrete_kwargs)
+        ax3.plot(signal.frequency_array, signal.X_phase_array, **self.discrete_kwargs)
 
         ax1.set_title('Waveform')
         ax2.set_title('Spectrum Amplitude')
@@ -136,8 +136,8 @@ class Grapher:
         left_setup = {'xticks': self.ticks.octaves_ticks(), 'xticklabels': self.ticks.octaves_labels()} # keys no usadas -> 'yticks': , 'yticklabels': , 'ylim': , 'xlim':
         right_setup = {'yticks': self.ticks.degrees_ticks(), 'yticklabels': self.ticks.degrees_ticks()} # keys no usadas -> 'ylim':
 
-        plt.setp(left_axis, ** left_setup)
-        plt.setp(right_axis, ** right_setup)
+        plt.setp(left_axis, **left_setup)
+        plt.setp(right_axis, **right_setup)
 
         left_axis.grid()
         plt.tight_layout()
@@ -146,7 +146,7 @@ class Grapher:
         return graph
 
 
-    def plot_waveforms(self, * signals):
+    def plot_waveforms(self, *signals):
         legends_list = []
         frequencies_list = []
 

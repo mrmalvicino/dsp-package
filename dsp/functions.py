@@ -173,7 +173,7 @@ def closest_to_average(numbers_list):
     return closest
 
 
-def get_lower_frequency(self, * signals):
+def get_lower_frequency(self, *signals):
     fundamental_frequency = signals[0].fundamental_frequency
 
     for i in range(1, len(signals), 1):
@@ -183,8 +183,8 @@ def get_lower_frequency(self, * signals):
     return fundamental_frequency
 
 
-def extend_to_min(* signals):
-    max_period = 1 / get_lower_frequency(* signals)
+def extend_to_min(*signals):
+    max_period = 1 / get_lower_frequency(*signals)
 
     for i in range(0, len(signals), 1):
         signals[i].extend(max_period)
@@ -192,20 +192,20 @@ def extend_to_min(* signals):
     return
 
 
-def get_sum_period(* signals):
+def get_sum_period(*signals):
     frequencies_list = []
 
     for i in range(0, len(signals), 1):
         frequencies_list.append(signals[i].fundamental_frequency)
 
-    gcd_result = math.gcd(* tuple(frequencies_list))
+    gcd_result = math.gcd(*tuple(frequencies_list))
     T_0 = 1 / gcd_result
 
     return T_0
 
 
-def extend_to_sum(* signals):
-    sum_period = get_sum_period(* signals) * 4 # Probando signal.extend(), sacar * 4 al terminar
+def extend_to_sum(*signals):
+    sum_period = get_sum_period(*signals) * 4 # Probando signal.extend(), sacar * 4 al terminar
 
     for i in range(0, len(signals), 1):
         signals[i].extend(sum_period)
