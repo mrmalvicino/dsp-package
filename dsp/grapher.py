@@ -5,19 +5,37 @@ from dsp.ticks import Ticks
 
 class Grapher:
 
-    def __init__(self, continuous_kwargs = None, discrete_kwargs = None):
+    def __init__(self, continuous_kwargs = None, discrete_kwargs = None, stem_kwargs = None):
         self._signal = Signal()
         self._ticks = Ticks()
 
         if continuous_kwargs is None:
-            continuous_kwargs = {'color': 'black', 'linewidth': 2}
+            continuous_kwargs = {
+                'color': 'black',
+                'linewidth': 2
+            }
 
         self._continuous_kwargs = continuous_kwargs
 
         if discrete_kwargs is None:
-            discrete_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
+            discrete_kwargs = {
+                'alpha': 1,
+                'color': 'black',
+                'linestyle': '',
+                'linewidth': 1,
+                'marker': 'o'
+            }
 
         self._discrete_kwargs = discrete_kwargs
+
+        if stem_kwargs is None:
+            stem_kwargs = {
+                'linefmt': 'black',
+                'markerfmt': 'o',
+                'basefmt': ' '
+            }
+
+        self._stem_kwargs = stem_kwargs
 
 
 #######################
@@ -56,6 +74,14 @@ class Grapher:
     @discrete_kwargs.setter
     def discrete_kwargs(self, discrete_kwargs):
         self._discrete_kwargs = discrete_kwargs
+
+    @property
+    def stem_kwargs(self):
+        return self._stem_kwargs
+
+    @stem_kwargs.setter
+    def stem_kwargs(self, stem_kwargs):
+        self._stem_kwargs = stem_kwargs
 
 
 #############
@@ -110,6 +136,39 @@ class Grapher:
         return graph
 
 
+    def stem_spectrum(self, signal):
+        fig, (ax2, ax3) = plt.subplots(nrows=2, ncols=1, figsize=(6, 4))
+        fig.suptitle(signal.description, fontsize=12)
+
+        markerline1, stemlines1, baseline1 = ax2.stem(
+            signal.frequency_array, signal.X_magnitude_array, **self.stem_kwargs)
+
+        markerline2, stemlines2, baseline2 = ax3.stem(
+            signal.frequency_array, signal.X_phase_array, **self.stem_kwargs)
+
+        plt.setp(stemlines1, linewidth=1)
+        plt.setp(stemlines2, linewidth=1)
+
+        ax2.set_ylabel('Amplitude')
+        ax3.set_ylabel('Phase [deg]')
+        ax2.yaxis.set_label_position('right')
+        ax3.yaxis.set_label_position('right')
+
+        ax2.set_xscale('linear')
+        ax3.set_xscale('linear')
+
+        ax2.grid(True)
+        ax3.grid(True)
+
+        ax2.set_yticks(self.ticks.zero_to_max_ticks(signal.X_magnitude_array))
+        ax3.set_yticks(self.ticks.degrees_ticks(90))
+
+        plt.tight_layout()
+        graph = plt.gcf()
+
+        return graph
+
+
     def plot_spectrum(self, signal):
         x_data = signal.frequency_array
         y_left_data = signal.X_magnitude_array
@@ -156,7 +215,7 @@ class Grapher:
         for i in range(0, len(signals), 1):
             x_data = signals[i].time_array
             y_data = signals[i].amplitude_array
-            plt.plot(x_data, y_data, ** self.continuous_kwargs)
+            plt.plot(x_data, y_data, **self.continuous_kwargs)
             legends_list.append(signals[i].description)
             frequencies_list.append(signals[i].fundamental_frequency)
 

@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import datetime
 
@@ -7,8 +8,7 @@ class Archive:
     def __init__(self):
         self._resources_path = os.path.realpath(os.path.join(self.get_root_dir(), '..', 'resources'))
         self._output_path = os.path.realpath(os.path.join(self.get_root_dir(), '..', 'output'))
-        self._file_name = str(datetime.datetime.now()) + ' by ' + os.getlogin()
-        self._save_figure_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
+        self._save_figure_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': True}
 
 
 #######################
@@ -33,14 +33,6 @@ class Archive:
         self._output_path = output_path
 
     @property
-    def file_name(self):
-        return self._file_name
-
-    @file_name.setter
-    def file_name(self, file_name):
-        self._file_name = file_name
-
-    @property
     def save_figure_kwargs(self):
         return self._save_figure_kwargs
 
@@ -63,9 +55,12 @@ class Archive:
         return root_dir
 
 
-    def save_plot(self, graph):
-        file_path = os.path.join(self.output_path, self.file_name + '.png')
-        graph.savefig(file_path, ** self.save_figure_kwargs)
+    def save_plot(self, graph, file_name = None):
+        if file_name is None:
+            file_name = str(datetime.datetime.now()) + ' by ' + os.getlogin()
+
+        file_path = os.path.join(self.output_path, file_name + '.png')
+        graph.savefig(file_path, **self.save_figure_kwargs)
 
         return
 
