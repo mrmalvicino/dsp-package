@@ -8,10 +8,16 @@ class Ticks:
         pass
 
 
-    def sinewave_ticks(self, frequency):
-        ticks_array = np.linspace(0, 1 / frequency, 5)
+    def sinewave_ticks(self, frequency, number_of_periods = 1):
+
+        ticks_array = np.linspace(0, number_of_periods / frequency, number_of_periods * 4 + 1)
 
         return ticks_array
+
+
+    def sinewave_labels(self, frequency, number_of_periods = 1):
+
+        return self.sinewave_ticks(frequency, number_of_periods) * 1000
 
 
     def degrees_ticks(self, interval = 30):

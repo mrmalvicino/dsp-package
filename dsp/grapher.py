@@ -208,7 +208,8 @@ class Grapher:
         return graph
 
 
-    def plot_waveforms(self, *signals):
+    def plot_waveforms(self, sampling_rate, *signals, truncate_time = True):
+
         legends_list = []
         frequencies_list = []
 
@@ -222,9 +223,28 @@ class Grapher:
             legends_list.append(signals[i].description)
             frequencies_list.append(signals[i].fundamental_frequency)
 
-        min_freq = min(frequencies_list)
-        plt.xticks(self.ticks.sinewave_ticks(min_freq))
-        plt.xlim(min(self.ticks.sinewave_ticks(min_freq)), max(self.ticks.sinewave_ticks(min_freq)))
+        min_freq = signals[0].fundamental_frequency
+        signal_index = 0
+
+        for i in range(1, len(signals), 1):
+            if (signals[i].fundamental_frequency < min_freq):
+                min_freq = signals[i].fundamental_frequency
+                signal_index = i
+
+        number_of_samples = len(signals[signal_index].time_array)
+        number_of_periods = int(number_of_samples * min_freq / sampling_rate)
+
+        plt.xticks(
+            self.ticks.sinewave_ticks(min_freq, number_of_periods),
+            self.ticks.sinewave_labels(min_freq, number_of_periods)
+        )
+
+        if truncate_time:
+            plt.xlim(
+                min(self.ticks.sinewave_ticks(min_freq)),
+                max(self.ticks.sinewave_ticks(min_freq))
+            )
+
         plt.legend(legends_list, loc = "upper right")
         graph = plt.gcf()
 

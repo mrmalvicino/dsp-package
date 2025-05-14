@@ -91,14 +91,33 @@ class Generator:
 ####################
 
 
-    def sinewave(self, fundamental_frequency = 1000, fundamental_amplitude = 1, fundamental_phase = 0, description = "N/A"):
+    def sinewave(
+            self,
+            fundamental_frequency = 1000,
+            fundamental_amplitude = 1,
+            fundamental_phase = 0,
+            number_of_periods = 1,
+            description = "N/A"
+    ):
+
         signal = Signal() # Crea una nueva instancia de la clase Signal en una nueva dirección de memoria RAM cada vez que se llama al método generator.sinewave(), a diferencia de declarar un objeto signal como atributo que usa siempre la misma dirección
 
         signal.fundamental_frequency = fundamental_frequency
         signal.fundamental_amplitude = fundamental_amplitude
         signal.fundamental_phase = fundamental_phase
-        signal.time_array = self.linspace_time_array(signal.fundamental_frequency)
-        signal.amplitude_array = self.sinewave_amplitude(signal.time_array, signal.fundamental_frequency, signal.fundamental_amplitude, signal.fundamental_phase)
+
+        signal.time_array = self.linspace_time_array(
+            signal.fundamental_frequency,
+            number_of_periods
+        )
+
+        signal.amplitude_array = self.sinewave_amplitude(
+            signal.time_array,
+            signal.fundamental_frequency,
+            signal.fundamental_amplitude,
+            signal.fundamental_phase
+        )
+
         signal.frequency_array = np.array([fundamental_frequency])
         signal.X_magnitude_array = np.array([fundamental_amplitude])
         signal.X_phase_array = np.array([fundamental_phase])
@@ -250,11 +269,17 @@ class Generator:
         return time_array
 
 
-    def linspace_time_array(self, wave_frequency):
+    def linspace_time_array(self, wave_frequency, number_of_periods = 1):
 
         wave_period = 1 / wave_frequency
         steps_amount = int(self.sampling_rate / wave_frequency)
-        time_array = np.linspace(0, wave_period, steps_amount, endpoint = True)
+
+        time_array = np.linspace(
+            0,
+            number_of_periods * wave_period,
+            number_of_periods * steps_amount,
+            endpoint = True
+        )
 
         return time_array
 
