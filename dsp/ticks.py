@@ -15,6 +15,7 @@ class Ticks:
 
 
     def degrees_ticks(self, interval = 30):
+
         phase_deg_ticks = np.arange(-180, 180 + interval, interval)
 
         return phase_deg_ticks
@@ -30,6 +31,7 @@ class Ticks:
 
 
     def octaves_labels(self):
+
         octave_labels = []
 
         for i in range(0, 10, 1):
@@ -42,22 +44,13 @@ class Ticks:
 
 
     def zero_to_max_ticks(self, array, interval = 1):
+
         zero_to_max_ticks = np.arange(0, np.max(array) + interval, interval)
 
         return zero_to_max_ticks
 
 
     def discrete_ticks(self, samples_array, amount_of_ticks = 20):
-        """
-        Generates a list of ticks that are simetrically distributed along a samples array and can be used in matplotlib.pyplot.setp() method.
-
-        Args:
-        samples_array (list) Array like data from where the ticks will be extracted.
-        amount_of_ticks (int, optional) Amount of ticks which are going to be extracted from the input data. Default is 20.
-
-        Returns:
-            (list) List of generated ticks.
-        """
 
         samples_array = to_list(samples_array)
         discrete_ticks = []

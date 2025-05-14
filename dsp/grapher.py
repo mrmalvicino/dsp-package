@@ -90,6 +90,7 @@ class Grapher:
 
 
     def plot_signal(self, signal):
+
         fig, (ax1, ax2, ax3) = plt.subplots(nrows = 3, ncols = 1, figsize = (6, 6))
 
         ax1.plot(signal.time_array, signal.amplitude_array, **self.continuous_kwargs)
@@ -137,6 +138,7 @@ class Grapher:
 
 
     def stem_spectrum(self, signal):
+
         fig, (ax2, ax3) = plt.subplots(nrows=2, ncols=1, figsize=(6, 4))
         fig.suptitle(signal.description, fontsize=12)
 
@@ -170,6 +172,7 @@ class Grapher:
 
 
     def plot_spectrum(self, signal):
+
         x_data = signal.frequency_array
         y_left_data = signal.X_magnitude_array
         y_right_data = signal.X_phase_array
